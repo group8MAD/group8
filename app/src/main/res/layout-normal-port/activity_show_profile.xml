@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <LinearLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    tools:context="group8.lab1.ShowProfile"
+    android:orientation="vertical">
+
+
+    <it.polito.mad.group8.SquareImageButtonNormalPort
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@mipmap/icon_profile"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="fitXY"
+        android:layout_marginBottom="16dp"
+        />
+
+    <TextView
+        android:id="@+id/nameDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/name"
+        />
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="5dp"
+        android:hint="@string/name"
+        android:inputType="textCapWords"
+        android:maxLength="27"
+
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"/>
+
+    <TextView
+        android:id="@+id/emailDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/email"
+        />
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="5dp"
+
+        android:inputType="textEmailAddress"
+        android:hint="@string/email"
+        android:maxLength="35"
+
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        />
+
+    <TextView
+        android:id="@+id/bioDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/bio"
+        />
+    <EditText
+        android:id="@+id/bio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="@string/bio"
+        android:inputType="textMultiLine"
+        android:maxLength="300"
+
+
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        />
+
+    </LinearLayout>
+</ScrollView>

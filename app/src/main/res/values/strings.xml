@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Group8</string>
+    <string name="edit">Edit</string>
+    <string name="name">Name</string>
+    <string name="nameHint">Insert you name here</string>
+    <string name="save">Save</string>
+    <string name="email">Email</string>
+    <string name="emailHint">Insert your email here</string>
+    <string name="bio">Biography</string>
+    <string name="bioHint">Write a short biography</string>
+    <string name="grantedPermission">Permissions granted</string>
+    <string name="deniedPermission">Permissions denied</string>
+
+</resources>

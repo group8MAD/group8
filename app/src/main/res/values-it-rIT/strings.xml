@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Group8</string>
+    <string name="edit">Edita</string>
+    <string name="name">Nome</string>
+    <string name="nameHint">Inserisci qui il tuo nome</string>
+    <string name="save">Salva</string>
+    <string name="email">Email</string>
+    <string name="emailHint">Inserisci qui la tua email</string>
+    <string name="bio">Biografia</string>
+    <string name="bioHint">Scrivi una tua breve biografia</string>
+    <string name="grantedPermission">Autorizzazioni ottenute</string>
+    <string name="deniedPermission">Autorizzazioni respinte</string>
+
+</resources>
