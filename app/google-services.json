@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1001849645197",
+    "firebase_url": "https://group8-12e04.firebaseio.com",
+    "project_id": "group8-12e04",
+    "storage_bucket": "group8-12e04.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001849645197:android:f8f11cadb0cbcb7e",
+        "android_client_info": {
+          "package_name": "it.polito.mad.group8"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1001849645197-uc53h0tqcrtpj6570gm6gnd10783afsb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1B_D-MoL6Z_H1Z_Dt2NRG0X8BzNeJCyc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

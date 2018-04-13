@@ -17,6 +17,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.File;
@@ -149,7 +152,8 @@ public class EditProfile extends AppCompatActivity {
         }
     }
 
-    @Override
+
+   /* @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(this, ShowProfile.class);
 
@@ -166,7 +170,20 @@ public class EditProfile extends AppCompatActivity {
         setResult(RESULT_OK, intent);
         finish();
         return true;
-    }
+    }*/
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        User user = new User();
+        user.setName(name.getText().toString());
+        user.setBiography(biography.getText().toString());
+        user.setEmail(email.getText().toString());
+
+         user.upload();
+
+
+        return false;
+    }
 }
 
