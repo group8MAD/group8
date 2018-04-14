@@ -1,106 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ShowProfile"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ShowProfile">
 
-    <it.polito.mad.group8.SquareImageButtonNormalLand
-        android:id="@+id/image"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <it.polito.mad.group8.SquareImageButtonNormalLand
+            android:id="@+id/image"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:background="@mipmap/icon_profile"
+            android:scaleType="fitXY"
+            />
+
+        <TextView
+            android:id="@+id/nameDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/name"
+            android:layout_toRightOf="@id/image"
+            android:layout_above="@id/name"
+            />
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="5dp"
+            android:hint="@string/name"
+            android:layout_toRightOf="@id/image"
+            android:layout_above="@id/emailDescription"
+            android:maxLines="1"
+
+
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
+
+        <TextView
+            android:id="@+id/emailDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/email"
+            android:layout_toRightOf="@id/image"
+            android:layout_above="@id/email"
+            />
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="5dp"
+            android:inputType="textEmailAddress"
+            android:hint="@string/email"
+            android:layout_toRightOf="@id/image"
+            android:maxLines="1"
+            android:layout_centerVertical="true"
+
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            />
+
+        <TextView
+            android:id="@+id/bioDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/bio"
+            android:layout_toRightOf="@id/image"
+            android:layout_below="@id/email"
+            />
+
+        <EditText
+            android:id="@+id/bio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:hint="@string/bio"
+            android:layout_toRightOf="@id/image"
+            android:layout_below="@id/bioDescription"
+            android:maxLines="3"
+
+
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            />
+
+
+    </RelativeLayout>
+
+    <android.support.design.widget.NavigationView
+        app:headerLayout="@layout/drawer_header"
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:background="@mipmap/icon_profile"
-        android:scaleType="fitXY"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
         />
 
-    <TextView
-        android:id="@+id/nameDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:text="@string/name"
-        android:layout_toRightOf="@id/image"
-        android:layout_above="@id/name"
-        />
-
-    <EditText
-        android:id="@+id/name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="5dp"
-        android:hint="@string/name"
-        android:layout_toRightOf="@id/image"
-        android:layout_above="@id/emailDescription"
-        android:maxLines="1"
-
-
-        android:clickable="false"
-        android:cursorVisible="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"/>
-
-    <TextView
-        android:id="@+id/emailDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:text="@string/email"
-        android:layout_toRightOf="@id/image"
-        android:layout_above="@id/email"
-        />
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="5dp"
-        android:inputType="textEmailAddress"
-        android:hint="@string/email"
-        android:layout_toRightOf="@id/image"
-        android:maxLines="1"
-        android:layout_centerVertical="true"
-
-        android:clickable="false"
-        android:cursorVisible="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        />
-
-    <TextView
-        android:id="@+id/bioDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:text="@string/bio"
-        android:layout_toRightOf="@id/image"
-        android:layout_below="@id/email"
-        />
-
-    <EditText
-        android:id="@+id/bio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:hint="@string/bio"
-        android:layout_toRightOf="@id/image"
-        android:layout_below="@id/bioDescription"
-        android:maxLines="3"
-
-
-        android:clickable="false"
-        android:cursorVisible="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        />
-
-
-</RelativeLayout>
+</android.support.v4.widget.DrawerLayout>

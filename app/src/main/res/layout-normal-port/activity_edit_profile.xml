@@ -3,13 +3,13 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".EditProfile">
 
     <LinearLayout
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        tools:context="group8.lab1.EditProfile"
         android:orientation="vertical">
 
     <it.polito.mad.group8.SquareImageButtonNormalPort
@@ -80,10 +80,6 @@
         android:hint="@string/bioHint"
         android:inputType="textMultiLine|textCapSentences"
         android:maxLength="300"
-
         />
-
-
-
     </LinearLayout>
 </ScrollView>

@@ -17,10 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,12 +28,11 @@ public class EditProfile extends AppCompatActivity {
     public static final int REQUEST_PERMISSIONS = 200;
     public static final String PROFILE_PICTURE = "ProfilePicture";
 
-    EditText name;
-    EditText email;
-    EditText biography;
-    ImageButton image;
-    File directory;
-    File imageCacheFile;
+    private EditText name;
+    private EditText email;
+    private EditText biography;
+    private ImageButton image;
+    private File imageCacheFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +42,6 @@ public class EditProfile extends AppCompatActivity {
         email = findViewById(R.id.email);
         biography = findViewById(R.id.bio);
         image = findViewById(R.id.image);
-
-        directory = getFilesDir();
 
         String nameString = getIntent().getStringExtra("name");
         String emailString = getIntent().getStringExtra("email");
@@ -74,6 +69,7 @@ public class EditProfile extends AppCompatActivity {
             }
         }
     };
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -137,7 +133,7 @@ public class EditProfile extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (imageCacheFile!=null){
-            File imageFileTmp = new File(directory,"ProfilePictureTmp");
+            File imageFileTmp = new File(getFilesDir(),"ProfilePictureTmp");
             if(imageCacheFile.renameTo(imageFileTmp))
                 outState.putString("imageSaved","YES");
         }
@@ -147,13 +143,14 @@ public class EditProfile extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState.getString("imageSaved")!=null) {
-            imageCacheFile = new File(directory, "ProfilePictureTmp");
-            image.setImageURI(Uri.fromFile(imageCacheFile));
+            if (savedInstanceState.getString("imageSaved").equals("YES")) {
+                imageCacheFile = new File(getFilesDir(), "ProfilePictureTmp");
+                image.setImageURI(Uri.fromFile(imageCacheFile));
+            }
         }
     }
 
-
-   /* @Override
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(this, ShowProfile.class);
 
@@ -162,7 +159,7 @@ public class EditProfile extends AppCompatActivity {
         intent.putExtra("biography", biography.getText().toString());
 
         if (imageCacheFile!=null ){
-            File fileDest = new File(directory, PROFILE_PICTURE);
+            File fileDest = new File(getFilesDir(), PROFILE_PICTURE);
             if (imageCacheFile.renameTo(fileDest)) {
                 intent.putExtra("imageUri", "OK");
             }
@@ -170,20 +167,7 @@ public class EditProfile extends AppCompatActivity {
         setResult(RESULT_OK, intent);
         finish();
         return true;
-    }*/
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        User user = new User();
-        user.setName(name.getText().toString());
-        user.setBiography(biography.getText().toString());
-        user.setEmail(email.getText().toString());
-
-         user.upload();
-
-
-        return false;
     }
+
 }
 

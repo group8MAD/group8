@@ -11,5 +11,10 @@
     <string name="bioHint">Scrivi una tua breve biografia</string>
     <string name="grantedPermission">Autorizzazioni ottenute</string>
     <string name="deniedPermission">Autorizzazioni respinte</string>
-
+    <string name="profile">Il mio profilo</string>
+    <string name="logout">Logout</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="books">Libri</string>
+    <string name="sign">Accedi</string>
 </resources>

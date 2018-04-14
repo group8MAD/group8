@@ -10,5 +10,11 @@
     <string name="bioHint">Write a short biography</string>
     <string name="grantedPermission">Permissions granted</string>
     <string name="deniedPermission">Permissions denied</string>
-
+    <string name="profile">My profile</string>
+    <string name="logout">Logout</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="books">Books</string>
+    <string name="register">Register</string>
+    <string name="sign">Sign In</string>
 </resources>
