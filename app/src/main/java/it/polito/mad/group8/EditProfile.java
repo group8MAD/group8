@@ -3,6 +3,7 @@ package it.polito.mad.group8;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +18,19 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -33,6 +47,11 @@ public class EditProfile extends AppCompatActivity {
     private EditText biography;
     private ImageButton image;
     private File imageCacheFile;
+    private String userID;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private FirebaseStorage storage = FirebaseStorage.getInstance("gs://group8-12e04.appspot.com/");
+    private DatabaseReference databaseReference;
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +61,9 @@ public class EditProfile extends AppCompatActivity {
         email = findViewById(R.id.email);
         biography = findViewById(R.id.bio);
         image = findViewById(R.id.image);
+        this.userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        databaseReference = database.getReference("users/"+this.userID);
+        storageReference = storage.getReference();
 
         String nameString = getIntent().getStringExtra("name");
         String emailString = getIntent().getStringExtra("email");
@@ -61,7 +83,6 @@ public class EditProfile extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             if (checkAndRequestPermissions()) {
-
                 CropImage.activity()
                         .setAspectRatio(1, 1)
                         .setMinCropResultSize(512, 512)
@@ -69,7 +90,6 @@ public class EditProfile extends AppCompatActivity {
             }
         }
     };
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -119,6 +139,22 @@ public class EditProfile extends AppCompatActivity {
                 Uri imageUri = result.getUri();
                 imageCacheFile = new File(imageUri.getPath());
                 image.setImageURI(imageUri);
+                storageReference.putFile(imageUri)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                // Get a URL to the uploaded content
+                                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                Toast.makeText(EditProfile.this, "YESSS", Toast.LENGTH_LONG).show();
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Toast.makeText(EditProfile.this, "NOOOOOOO", Toast.LENGTH_LONG).show();
+                            }
+                        });
             }
         }
     }
@@ -146,7 +182,8 @@ public class EditProfile extends AppCompatActivity {
             if (savedInstanceState.getString("imageSaved").equals("YES")) {
                 imageCacheFile = new File(getFilesDir(), "ProfilePictureTmp");
                 image.setImageURI(Uri.fromFile(imageCacheFile));
-            }
+
+             }
         }
     }
 
@@ -154,20 +191,24 @@ public class EditProfile extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(this, ShowProfile.class);
 
-        intent.putExtra("name", name.getText().toString());
-        intent.putExtra("email", email.getText().toString());
-        intent.putExtra("biography", biography.getText().toString());
+        updateDatabaseProfile();
 
         if (imageCacheFile!=null ){
             File fileDest = new File(getFilesDir(), PROFILE_PICTURE);
             if (imageCacheFile.renameTo(fileDest)) {
                 intent.putExtra("imageUri", "OK");
             }
+
         }
-        setResult(RESULT_OK, intent);
         finish();
         return true;
     }
 
+    public void updateDatabaseProfile(){
+        databaseReference.child("name").setValue(this.name.getText().toString());
+        databaseReference.child("email").setValue(this.email.getText().toString());
+        databaseReference.child("biography").setValue(this.biography.getText().toString());
+
+    }
 }
 

@@ -9,13 +9,16 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class User {
 
-    private String uid;
     private String name;
     private String email;
     private String biography;
+    private String imageUri;
 
-    public User(){
-
+    public User() {
+        this.name = "";
+        this.email = "";
+        this.biography = "";
+        this.imageUri = "";
     }
 
     public User(String name, String email, String biography) {
@@ -28,13 +31,6 @@ public class User {
         return name;
     }
 
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
     public void setName(String name) {
         this.name = name;
     }
@@ -55,9 +51,11 @@ public class User {
         this.biography = biography;
     }
 
-    public void upload() {
-        DatabaseReference location = FirebaseDatabase.getInstance().getReference();
+    public String getImageUri() {
+        return imageUri;
+    }
 
-        location.child("users").child(location.child("users").push().getKey()).setValue(this);
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 }

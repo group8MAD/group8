@@ -1,14 +1,10 @@
 package it.polito.mad.group8;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,26 +14,27 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toolbar;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.theartofdev.edmodo.cropper.CropImageView;
-
-import org.w3c.dom.Text;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
-import java.net.URI;
+
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ShowProfile extends AppCompatActivity {
 
 
-    public static final String MY_PREFS_NAME = "MyPrefsFile";
+
     public static final String PROFILE_PICTURE = "ProfilePicture";
 
     private EditText name;
@@ -48,10 +45,16 @@ public class ShowProfile extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
+    private User user;
+    private String userID;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference ref;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_show_profile);
         image = findViewById(R.id.image);
         name = findViewById(R.id.name);
@@ -60,26 +63,8 @@ public class ShowProfile extends AppCompatActivity {
         mNavigationView = findViewById(R.id.nav_view);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout,R.string.open,R.string.close);
-
-        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        String name = prefs.getString("name", null);
-        String email = prefs.getString("email",null);
-        String biography = prefs.getString("biography", null);
-        imageFile = new File(getFilesDir(), PROFILE_PICTURE);
-
-        if (name != null) {
-            this.name.setText(name);
-        }
-        if (email != null){
-            this.email.setText(email);
-        }
-        if (biography!=null){
-            this.biography.setText(biography);
-        }
-        if (imageFile.exists()){
-            this.image.setImageURI(Uri.fromFile(imageFile));
-        }
-
+        user = new User();
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -100,6 +85,19 @@ public class ShowProfile extends AppCompatActivity {
                 return true;
             }
         });
+
+        ref = database.getReference("users/"+this.userID);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                getData(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void setHeaderDrawer(){
@@ -110,8 +108,7 @@ public class ShowProfile extends AppCompatActivity {
 
         name.setText(this.name.getText().toString());
         email.setText(this.email.getText().toString());
-        if (imageFile.exists())
-            image.setImageURI(Uri.fromFile(imageFile));
+
     }
 
     @Override
@@ -123,10 +120,6 @@ public class ShowProfile extends AppCompatActivity {
 
         getMenuInflater().inflate(R.menu.menu_show_profile, menu);
         mNavigationView.inflateMenu(R.menu.menu_drawer_loggedin);
-        setHeaderDrawer();
-
-
-
         return true;
     }
 
@@ -138,9 +131,8 @@ public class ShowProfile extends AppCompatActivity {
                 intent.putExtra("name", name.getText().toString());
                 intent.putExtra("email", email.getText().toString());
                 intent.putExtra("bio", biography.getText().toString());
-                startActivityForResult(intent, 0);
+                startActivity(intent);
                 return true;
-
         }
         if (mToggle.onOptionsItemSelected(item)){
             return true;
@@ -148,43 +140,6 @@ public class ShowProfile extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK && requestCode == 0) {
-
-            String stringName = data.getStringExtra("name");
-            String stringEmail = data.getStringExtra("email");
-            String stringBiography = data.getStringExtra("biography");
-            String imageUriString = data.getStringExtra("imageUri");
-
-            name.setText(stringName);
-            email.setText(stringEmail);
-            biography.setText(stringBiography);
-            setHeaderDrawer();
-
-            if(imageUriString!=null && imageUriString.equals("OK")) {
-                recreate();
-            }
-        }
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-        if(!name.getText().toString().isEmpty()){
-            editor.putString("name", name.getText().toString());
-        }
-        if(!email.getText().toString().isEmpty()){
-            editor.putString("email", email.getText().toString());
-        }
-        if(!biography.getText().toString().isEmpty()){
-            editor.putString("biography", biography.getText().toString());
-        }
-        editor.apply();
-    }
 
     public void signOut(){
         mDrawerLayout.closeDrawers();
@@ -197,4 +152,19 @@ public class ShowProfile extends AppCompatActivity {
                     }
                 });
     }
+
+    private void getData(DataSnapshot dataSnapshot){
+        if(!dataSnapshot.exists()){
+            ref.setValue(this.user);
+        }else{
+            this.user.setName(dataSnapshot.getValue(User.class).getName());
+            this.user.setEmail(dataSnapshot.getValue(User.class).getEmail());
+            this.user.setBiography(dataSnapshot.getValue(User.class).getBiography());
+            this.name.setText(user.getName());
+            this.email.setText(user.getEmail());
+            this.biography.setText(user.getBiography());
+            setHeaderDrawer();
+        }
+    }
+
 }
