@@ -1,6 +1,7 @@
 package it.polito.mad.group8;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -52,6 +53,9 @@ public class EditProfile extends AppCompatActivity {
     private FirebaseStorage storage = FirebaseStorage.getInstance("gs://group8-12e04.appspot.com/");
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
+    private Uri imageUri;
+  //  private ProgressDialog progress;
+    StorageReference filepath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +68,8 @@ public class EditProfile extends AppCompatActivity {
         this.userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         databaseReference = database.getReference("users/"+this.userID);
         storageReference = storage.getReference();
+
+        filepath = storageReference.child("Photos").child(userID.toString());
 
         String nameString = getIntent().getStringExtra("name");
         String emailString = getIntent().getStringExtra("email");
@@ -134,25 +140,35 @@ public class EditProfile extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK){
+
+
             if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                Uri imageUri = result.getUri();
+                imageUri = result.getUri();
+
+                Toast.makeText(EditProfile.this, "Image cropped", Toast.LENGTH_LONG).show();
+
+               //progress.setMessage("Uploading picture...");
+               //progress.show();
+
                 imageCacheFile = new File(imageUri.getPath());
                 image.setImageURI(imageUri);
-                storageReference.putFile(imageUri)
+
+                filepath.putFile(imageUri)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 // Get a URL to the uploaded content
                                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                Toast.makeText(EditProfile.this, "YESSS", Toast.LENGTH_LONG).show();
+                                Toast.makeText(EditProfile.this, "Image saved to the storage", Toast.LENGTH_LONG).show();
+                                //progress.dismiss();
 
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception exception) {
-                                Toast.makeText(EditProfile.this, "NOOOOOOO", Toast.LENGTH_LONG).show();
+                                Toast.makeText(EditProfile.this, "Sorry the image could not be saved", Toast.LENGTH_LONG).show();
                             }
                         });
             }
@@ -208,6 +224,7 @@ public class EditProfile extends AppCompatActivity {
         databaseReference.child("name").setValue(this.name.getText().toString());
         databaseReference.child("email").setValue(this.email.getText().toString());
         databaseReference.child("biography").setValue(this.biography.getText().toString());
+        databaseReference.child("imageUri").setValue(this.filepath.toString());
 
     }
 }

@@ -47,6 +47,7 @@ public class ShowProfile extends AppCompatActivity {
     private NavigationView mNavigationView;
     private User user;
     private String userID;
+    private Uri imageUri;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref;
 
@@ -163,6 +164,7 @@ public class ShowProfile extends AppCompatActivity {
             this.name.setText(user.getName());
             this.email.setText(user.getEmail());
             this.biography.setText(user.getBiography());
+            //this.user.setImageUri(imageUri.toString());
             setHeaderDrawer();
         }
     }
