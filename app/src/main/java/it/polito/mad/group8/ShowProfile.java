@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -73,7 +72,7 @@ public class ShowProfile extends AppCompatActivity {
                 switch (item.getItemId()){
                     case R.id.nav_books_logged:
                         finish();
-                        startActivity(new Intent(ShowProfile.this, BookList.class));
+                        startActivity(new Intent(ShowProfile.this, BookActivity.class));
                         return true;
 
                     case R.id.logout:
@@ -149,7 +148,7 @@ public class ShowProfile extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         finish();
-                        startActivity(new Intent(ShowProfile.this, BookList.class));
+                        startActivity(new Intent(ShowProfile.this, BookActivity.class));
                     }
                 });
     }

@@ -17,4 +17,5 @@
     <string name="close">Close</string>
     <string name="books">Libri</string>
     <string name="sign">Accedi</string>
+    <string name="publish">Pubblica Libro</string>
 </resources>

@@ -17,4 +17,6 @@
     <string name="books">Books</string>
     <string name="register">Register</string>
     <string name="sign">Sign In</string>
+    <string name="get_info">Get Book Info</string>
+    <string name="publish">Publish Book</string>
 </resources>
