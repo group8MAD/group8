@@ -63,6 +63,7 @@ public class BookActivity extends AppCompatActivity {
     private DatabaseReference usersRef;
     private DatabaseReference booksRef;
     Book book;
+    String isbn;
 
     Button button;
     ProgressDialog pd;
@@ -72,9 +73,10 @@ public class BookActivity extends AppCompatActivity {
     TextView publisher;
     TextView year;
     ImageView image;
-    EditText isbn;
+    EditText isbnEditTextView;
     Button scan;
     Button publish;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +86,7 @@ public class BookActivity extends AppCompatActivity {
         mNavigationView = findViewById(R.id.nav_view);
         mDrawerLayout.addDrawerListener(mToggle);
         book = new Book();
-        booksRef = database.getReference("books/"+FirebaseAuth.getInstance().getCurrentUser().getUid());
+        booksRef = database.getReference("books/");
 
         title = findViewById(R.id.title);
         authors = findViewById(R.id.authors);
@@ -92,7 +94,7 @@ public class BookActivity extends AppCompatActivity {
         year = findViewById(R.id.year);
         image = findViewById(R.id.image);
         button = findViewById(R.id.button);
-        isbn = findViewById(R.id.isbn);
+        isbnEditTextView = findViewById(R.id.isbn);
         scan = findViewById(R.id.scan);
         publish = findViewById(R.id.publish);
 
@@ -106,14 +108,15 @@ public class BookActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new JsonTask().execute("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn.getText().toString());
+                isbn = isbnEditTextView.getText().toString();
+                new JsonTask().execute("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn);
             }
         });
 
         publish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               booksRef.setValue(book);
+               publishBook();
             }
         });
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -174,7 +177,8 @@ public class BookActivity extends AppCompatActivity {
             if(result.getContents() == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-                new JsonTask().execute("https://www.googleapis.com/books/v1/volumes?q=isbn:"+result.getContents());
+                isbn = result.getContents();
+                new JsonTask().execute("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -192,6 +196,9 @@ public class BookActivity extends AppCompatActivity {
                 SIGN_IN);
 
     }
+
+
+    //signOut User and update DrawerMenu
     public void signOut(){
         mDrawerLayout.closeDrawers();
         AuthUI.getInstance()
@@ -202,6 +209,8 @@ public class BookActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    //Switching to ShowProfile activity
     public void startProfileActivity(){
         Intent intent = new Intent(BookActivity.this,ShowProfile.class);
         finish();
@@ -252,7 +261,7 @@ public class BookActivity extends AppCompatActivity {
 
     }
 
-
+    //Getting the JSON text from the https://www.googleapis.com/books/v1/volumes?q=isbn:.....
     private class JsonTask extends AsyncTask<String, String, String> {
 
         protected void onPreExecute() {
@@ -286,7 +295,7 @@ public class BookActivity extends AppCompatActivity {
 
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line+"\n");
-                    Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
+                    Log.d("Response: ", "> " + line);
 
                 }
 
@@ -313,38 +322,42 @@ public class BookActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String result) {   //result contains JSON text
             super.onPostExecute(result);
             if (pd.isShowing()){
                 pd.dismiss();
             }
+            //creating a JSON Object from JSON text
             try{
                 JSONObject object = new JSONObject(result);
-                JSONObject bookObject = object.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo");
+                JSONObject bookObject = object.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo"); //navigating the DOM tree and getting the first book found on the file
                 book.setTitle(bookObject.getString("title"));
                 book.setEditionYear(bookObject.getString("publishedDate"));
                 JSONArray authors = bookObject.getJSONArray("authors");
-                StringBuilder authorsString = new StringBuilder();
 
+                //creating a String in order to append all the authors
+                StringBuilder authorsString = new StringBuilder();
                 for (int i = 0; i < authors.length(); i++){
                     authorsString.append(authors.get(i).toString()+", ");
                 }
+
                 book.setAuthors(authorsString.toString());
                 book.setPublisher(bookObject.getString("publisher"));
 
 
-            }catch (JSONException e){
-                Toast.makeText(BookActivity.this,"non riuscito", Toast.LENGTH_LONG).show();
+            }catch (JSONException e){  //throw if some data doesn't exist
+                Toast.makeText(BookActivity.this, R.string.noData, Toast.LENGTH_LONG).show();
             }
+            //trying to get book thumbnail
             try {
                 JSONObject object = new JSONObject(result);
                 String imageInfo = object.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo").getJSONObject("imageLinks").getString("thumbnail");
                 book.setThumbnail(imageInfo);
-
             }catch (JSONException e){
                 Toast.makeText(BookActivity.this,"no thumbnail", Toast.LENGTH_LONG).show();
             }
-            book.setOwnerID(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
 
 
             title.setText(book.getTitle());
@@ -352,10 +365,39 @@ public class BookActivity extends AppCompatActivity {
             year.setText(book.getEditionYear());
             publisher.setText(book.getPublisher());
 
+            //Check if thumbnail exists
             if (!book.getThumbnail().isEmpty()){
-                Picasso.get().load(book.getThumbnail()).into(image);
+                Picasso.get().load(book.getThumbnail()).into(image); //Using Picasso library to load and URL into imageView
             }
         }
+    }
+
+    //publishing book on the database like /books/isbn/{bookInfo}
+    public void publishBook(){
+        booksRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!isbn.isEmpty()) {
+                    if (dataSnapshot.hasChild(isbn)) {
+                        //adding owner and book condition if there is already a book in the database
+                        //path /books/{bookISBN}/users/{userID}/condition
+                        dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue("Condition should go here");
+                    } else {
+                        //adding book
+                        //path /books/{bookISBN}
+                        dataSnapshot.getRef().child(isbn).setValue(book);
+                        //adding owner and book condition
+                        //path /books/{bookISBN}/users/{userID}/condition
+                        dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue("Condition should go here");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
 
