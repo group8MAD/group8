@@ -41,7 +41,6 @@ public class ShowProfile extends AppCompatActivity {
     private EditText email;
     private EditText biography;
     private ImageView image;
-    private File imageFile;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
@@ -164,7 +163,7 @@ public class ShowProfile extends AppCompatActivity {
             this.name.setText(user.getName());
             this.email.setText(user.getEmail());
             this.biography.setText(user.getBiography());
-          //  Picasso.get().load(imageUri).into(image);
+            Picasso.get().load(dataSnapshot.getValue(User.class).getImageUri()).into(image);
 
             setHeaderDrawer();
         }

@@ -358,8 +358,6 @@ public class BookActivity extends AppCompatActivity {
             }
 
 
-
-
             title.setText(book.getTitle());
             authors.setText(book.getAuthors());
             year.setText(book.getEditionYear());
@@ -392,7 +390,6 @@ public class BookActivity extends AppCompatActivity {
                     }
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 

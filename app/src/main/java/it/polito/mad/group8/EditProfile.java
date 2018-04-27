@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -161,6 +162,7 @@ public class EditProfile extends AppCompatActivity {
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 // Get a URL to the uploaded content
                                 downloadUri = taskSnapshot.getDownloadUrl();
+                                Log.e("donwloadUri","= "+downloadUri.toString());
                                 Toast.makeText(EditProfile.this, "Image saved to the storage", Toast.LENGTH_LONG).show();
                                 //progress.dismiss();
 
@@ -225,7 +227,8 @@ public class EditProfile extends AppCompatActivity {
         databaseReference.child("name").setValue(this.name.getText().toString());
         databaseReference.child("email").setValue(this.email.getText().toString());
         databaseReference.child("biography").setValue(this.biography.getText().toString());
-        databaseReference.child("imageUri").setValue(this.downloadUri.toString()); //saves the url of the image in the db
+        if (this.downloadUri != null)
+            databaseReference.child("imageUri").setValue(this.downloadUri.toString()); //saves the url of the image in the db
 
     }
 }
