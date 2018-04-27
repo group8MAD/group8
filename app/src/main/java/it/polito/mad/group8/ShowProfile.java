@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
@@ -163,7 +164,8 @@ public class ShowProfile extends AppCompatActivity {
             this.name.setText(user.getName());
             this.email.setText(user.getEmail());
             this.biography.setText(user.getBiography());
-            //this.user.setImageUri(imageUri.toString());
+          //  Picasso.get().load(imageUri).into(image);
+
             setHeaderDrawer();
         }
     }

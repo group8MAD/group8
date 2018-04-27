@@ -53,7 +53,8 @@ public class EditProfile extends AppCompatActivity {
     private FirebaseStorage storage = FirebaseStorage.getInstance("gs://group8-12e04.appspot.com/");
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
-    private Uri imageUri;
+    private Uri downloadUri;
+    private Uri imageUri;//variable where we save the direction of the image on the db
   //  private ProgressDialog progress;
     StorageReference filepath;
 
@@ -69,7 +70,7 @@ public class EditProfile extends AppCompatActivity {
         databaseReference = database.getReference("users/"+this.userID);
         storageReference = storage.getReference();
 
-        filepath = storageReference.child("Photos").child(userID.toString());
+        filepath = storageReference.child("Photos").child(userID.toString());  //path of the image in the db creates a folder Photos/userUID
 
         String nameString = getIntent().getStringExtra("name");
         String emailString = getIntent().getStringExtra("email");
@@ -144,7 +145,7 @@ public class EditProfile extends AppCompatActivity {
 
             if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                imageUri = result.getUri();
+                imageUri = result.getUri(); //if the image is cropped, save the direction of it in imageUri
 
                 Toast.makeText(EditProfile.this, "Image cropped", Toast.LENGTH_LONG).show();
 
@@ -159,7 +160,7 @@ public class EditProfile extends AppCompatActivity {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 // Get a URL to the uploaded content
-                                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                downloadUri = taskSnapshot.getDownloadUrl();
                                 Toast.makeText(EditProfile.this, "Image saved to the storage", Toast.LENGTH_LONG).show();
                                 //progress.dismiss();
 
@@ -224,7 +225,7 @@ public class EditProfile extends AppCompatActivity {
         databaseReference.child("name").setValue(this.name.getText().toString());
         databaseReference.child("email").setValue(this.email.getText().toString());
         databaseReference.child("biography").setValue(this.biography.getText().toString());
-        databaseReference.child("imageUri").setValue(this.filepath.toString());
+        databaseReference.child("imageUri").setValue(this.downloadUri.toString()); //saves the url of the image in the db
 
     }
 }
