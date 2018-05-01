@@ -93,11 +93,11 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="8dp"
-            android:text="@string/get_info"
             android:drawableRight="@drawable/information_outline"
+            android:text="@string/get_info"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.674"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline" />
 
         <EditText
@@ -109,6 +109,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="16dp"
+            android:text="@string/isbn"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintHorizontal_bias="0.0"
@@ -149,8 +150,8 @@
             android:id="@+id/scan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="24dp"
-            android:layout_marginStart="24dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="84dp"
             android:drawableRight="@drawable/book_open_page_variant"
             android:text="Press To scan  "

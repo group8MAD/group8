@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Group8</string>
+    <string name="app_name">BookSharing</string>
     <string name="edit">Edit</string>
     <string name="name">Name</string>
     <string name="nameHint">Insert you name here</string>
@@ -21,5 +21,6 @@
     <string name="publish">Publish Book</string>
     <string name="noThumbnail">No thumbnail was found</string>
     <string name="noData">Couldnt get some data</string>
+    <string name="isbn">Write here the ISBN</string>
 
 </resources>
