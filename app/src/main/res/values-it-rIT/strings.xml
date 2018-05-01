@@ -15,7 +15,22 @@
     <string name="logout">Logout</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
-    <string name="books">Libri</string>
+    <string name="books">Condividi libro</string>
     <string name="sign">Accedi</string>
-    <string name="publish">Pubblica Libro</string>
+    <string name="publish">Condividi Libro</string>
+    <string name="insertIsbn">(Inserire codice ISBN)</string>
+    <string name="dialogTitle">Scegli le condizioni del tuo libro</string>
+    <string name="cancel">Cancella</string>
+    <string name="asNew">Come Nuovo</string>
+    <string name="veryGood">Ottime</string>
+    <string name="good">Buone</string>
+    <string name="fair">Accettabili</string>
+    <string name="poor">Scarse</string>
+    <string name="bookNotValid">Libro non valido!</string>
+    <string name="pressToScan">Scannerizza ISBN</string>
+    <string name="SearchIsbn">Cerca ISBN</string>
+    <string name="usageDescription">Per ottenere informazioni sul libro che si desidera condividere, inserire il codice ISBN nell\'apposito spazio oppure scannerizzare il codice a barre presente sul retro del libro</string>
+    <string name="notSignedIn">Se vuoi condividere un libro devi prima accedere!</string>
+    <string name="noThumbnail">Nessuna anteprima del libro trovata!</string>
+    <string name="noData">Alcune informazioni sul libro non sono state trovate!</string>
 </resources>

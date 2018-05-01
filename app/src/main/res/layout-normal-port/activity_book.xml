@@ -26,36 +26,55 @@
             android:layout_width="1dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_percent="0.40" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@+id/authors"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/authors"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@+id/publisher"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <TextView
             android:id="@+id/publisher"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/year"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/authors" />
+
+        <TextView
+            android:id="@+id/year"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -66,20 +85,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@+id/guidelineOri"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/year"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/publisher" />
 
@@ -88,75 +94,129 @@
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="120dp"
+            android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginStart="8dp"
-            android:drawableRight="@drawable/information_outline"
-            android:text="@string/get_info"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline" />
+            android:layout_marginStart="16dp"
+            android:text="@string/SearchIsbn"
+            app:layout_constraintBottom_toTopOf="@+id/publish"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
             android:id="@+id/isbn"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="260dp"
-            android:layout_marginEnd="8dp"
+            android:layout_height="47dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
-            android:text="@string/isbn"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/button"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:inputType="numberDecimal"/>
 
         <ImageView
             android:id="@+id/image"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@+id/guidelineOri"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <Button
             android:id="@+id/publish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="36dp"
+            android:layout_marginBottom="32dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:text="@string/publish"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/scan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="84dp"
-            android:drawableRight="@drawable/book_open_page_variant"
-            android:text="Press To scan  "
+            android:text="@string/pressToScan"
+            app:layout_constraintBottom_toTopOf="@+id/publish"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline" />
+
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_height="51dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:src="@mipmap/barcode"
+            app:layout_constraintBottom_toTopOf="@+id/scan"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:background="#6e737373"
+            app:layout_constraintBottom_toTopOf="@+id/publish"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/usageDescription"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guidelineOri" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="ISBN:"
+            app:layout_constraintBottom_toTopOf="@+id/isbn"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     </android.support.constraint.ConstraintLayout>
 
