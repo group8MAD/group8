@@ -1,8 +1,11 @@
 package it.polito.mad.group8;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.PersistableBundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -76,6 +79,7 @@ public class BookActivity extends AppCompatActivity {
     EditText isbnEditTextView;
     Button scan;
     Button publish;
+    int choice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +120,41 @@ public class BookActivity extends AppCompatActivity {
         publish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               publishBook();
+                final String options[] = new String[] {getResources().getString(R.string.asNew),
+                        getResources().getString(R.string.veryGood),
+                        getResources().getString(R.string.good),
+                        getResources().getString(R.string.fair),
+                        getResources().getString(R.string.poor)};
+
+                choice = 2;
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(BookActivity.this);
+                builder.setTitle(R.string.dialogTitle)
+                        .setPositiveButton(R.string.publish, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+                                    publishBook(options[choice]);
+                                }else{
+                                    Toast.makeText(BookActivity.this,R.string.notSignedIn,Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .setSingleChoiceItems(options, 2, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                choice = which;
+                            }
+                        })
+                ;
+                builder.show();
+
             }
         });
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -252,12 +290,10 @@ public class BookActivity extends AppCompatActivity {
     }
     public void setHeaderDrawer(){
         View headerView = mNavigationView.getHeaderView(0);
-        TextView name = headerView.findViewById(R.id.header_name);
-        TextView email = headerView.findViewById(R.id.header_email);
+
         CircleImageView image = headerView.findViewById(R.id.header_image);
 
-        name.setText(this.user.getName());
-        email.setText(this.user.getEmail());
+
 
     }
 
@@ -341,7 +377,7 @@ public class BookActivity extends AppCompatActivity {
                     authorsString.append(authors.get(i).toString()+", ");
                 }
 
-                book.setAuthors(authorsString.toString());
+                book.setAuthors(authorsString.toString().substring(0,authorsString.length()-2));
                 book.setPublisher(bookObject.getString("publisher"));
 
 
@@ -354,7 +390,7 @@ public class BookActivity extends AppCompatActivity {
                 String imageInfo = object.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo").getJSONObject("imageLinks").getString("thumbnail");
                 book.setThumbnail(imageInfo);
             }catch (JSONException e){
-                Toast.makeText(BookActivity.this,"no thumbnail", Toast.LENGTH_LONG).show();
+                Toast.makeText(BookActivity.this,R.string.noThumbnail, Toast.LENGTH_SHORT).show();
             }
 
 
@@ -371,15 +407,15 @@ public class BookActivity extends AppCompatActivity {
     }
 
     //publishing book on the database like /books/isbn/{bookInfo}
-    public void publishBook(){
+    public void publishBook(final String condition){
         booksRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!isbn.isEmpty()) {
+                if (isbn!= null && !isbn.isEmpty() && !book.getTitle().isEmpty()) {
                     if (dataSnapshot.hasChild(isbn)) {
                         //adding owner and book condition if there is already a book in the database
                         //path /books/{bookISBN}/users/{userID}/condition
-                        dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue("Condition should go here");
+                        dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue(condition);
                     } else {
                         //adding book
                         //path /books/{bookISBN}
@@ -388,6 +424,8 @@ public class BookActivity extends AppCompatActivity {
                         //path /books/{bookISBN}/users/{userID}/condition
                         dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue("Condition should go here");
                     }
+                }else{
+                    Toast.makeText(BookActivity.this,R.string.bookNotValid,Toast.LENGTH_LONG).show();
                 }
             }
             @Override
@@ -396,6 +434,39 @@ public class BookActivity extends AppCompatActivity {
             }
         });
     }
-}
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("title", book.getTitle());
+        outState.putString("authors", book.getAuthors());
+        outState.putString("publisher", book.getPublisher());
+        outState.putString("year", book.getEditionYear());
+        outState.putString("thumbnail", book.getThumbnail());
+        outState.putString("isbn", isbn);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        book.setTitle(savedInstanceState.getString("title"));
+        book.setAuthors(savedInstanceState.getString("authors"));
+        book.setPublisher(savedInstanceState.getString("publisher"));
+        book.setEditionYear(savedInstanceState.getString("year"));
+        book.setThumbnail(savedInstanceState.getString("thumbnail"));
+        this.isbn = savedInstanceState.getString("isbn");
+
+
+        title.setText(book.getTitle());
+        authors.setText(book.getAuthors());
+        year.setText(book.getEditionYear());
+        publisher.setText(book.getPublisher());
+
+        //Check if thumbnail exists
+        if (!book.getThumbnail().isEmpty()){
+            Picasso.get().load(book.getThumbnail()).into(image); //Using Picasso library to load and URL into imageView
+        }
+    }
+}
 
