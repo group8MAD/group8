@@ -107,6 +107,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/SearchIsbn"
+            android:drawableLeft="@drawable/magnify"
             app:layout_constraintBottom_toTopOf="@+id/publish"
             app:layout_constraintEnd_toStartOf="@+id/view"
             app:layout_constraintHorizontal_bias="0.5"
@@ -150,6 +151,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/publish"
+            android:drawableLeft="@drawable/book_open_page_variant"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline1" />
@@ -164,6 +166,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginStart="8dp"
             android:text="@string/pressToScan"
+            android:drawableLeft="@drawable/magnify"
             app:layout_constraintBottom_toTopOf="@+id/publish"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

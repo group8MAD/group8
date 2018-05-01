@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Group8</string>
+    <string name="app_name">bookSharing!</string>
     <string name="edit">Edit</string>
     <string name="name">Name</string>
     <string name="direction">Direction</string>
@@ -25,7 +25,7 @@
     <string name="books">Share book</string>
     <string name="register">Register</string>
     <string name="sign">Sign In</string>
-    <string name="publish">Share Book</string>
+    <string name="publish">  Share Book</string>
     <string name="noThumbnail">No thumbnail was found</string>
     <string name="noData">Couldn\'t get some data</string>
     <string name="insertIsbn">(Insert ISBN code)</string>
@@ -37,8 +37,8 @@
     <string name="fair">Fair</string>
     <string name="poor">Poor</string>
     <string name="bookNotValid">Book is not valid!</string>
-    <string name="pressToScan">Scan ISBN</string>
-    <string name="SearchIsbn">Search ISBN</string>
+    <string name="pressToScan">Scan ISBN  </string>
+    <string name="SearchIsbn">Search ISBN  </string>
     <string name="usageDescription">To get information about the book you want to share, enter the ISBN code in the space provided or scan the barcode on the back of the book</string>
     <string name="notSignedIn">If you want to share a book Sign In first!</string>
 
