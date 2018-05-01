@@ -12,8 +12,6 @@ public class Book {
     private String thumbnail;
     private String publisher;
     private String editionYear;
-    private String condition;
-    private String ownerID;
 
     public Book() {
         this.title = "";
@@ -21,8 +19,6 @@ public class Book {
         this.thumbnail = "";
         this.publisher = "";
         this.editionYear = "";
-        this.condition = "";
-        this.ownerID = "";
     }
 
     public Book(String title, String authors, String thumbnail, String publisher, String editionYear, String condition, String ownerID) {
@@ -31,8 +27,6 @@ public class Book {
         this.thumbnail = thumbnail;
         this.publisher = publisher;
         this.editionYear = editionYear;
-        this.condition = condition;
-        this.ownerID = ownerID;
     }
 
     public String getTitle() {
@@ -75,19 +69,4 @@ public class Book {
         this.editionYear = editionYear;
     }
 
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
-    public String getOwnerID() {
-        return ownerID;
-    }
-
-    public void setOwnerID(String ownerID) {
-        this.ownerID = ownerID;
-    }
 }
