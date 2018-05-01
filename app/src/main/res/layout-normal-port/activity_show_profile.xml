@@ -98,6 +98,10 @@
                 android:maxLines="2"
                 android:maxLength="30"
                 android:inputType="textCapWords"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 />
             <TextView
                 android:id="@+id/cityDescription"
@@ -118,6 +122,10 @@
                 android:maxLines="2"
                 android:maxLength="30"
                 android:inputType="textCapWords"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 />
             <TextView
                 android:id="@+id/capDescription"
@@ -138,6 +146,10 @@
                 android:maxLines="2"
                 android:maxLength="30"
                 android:inputType="textCapWords"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 />
             <TextView
                 android:id="@+id/provinceDescription"
@@ -158,6 +170,10 @@
                 android:maxLines="2"
                 android:maxLength="30"
                 android:inputType="textCapWords"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 />
 
         <TextView
