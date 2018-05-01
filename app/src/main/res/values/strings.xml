@@ -17,8 +17,9 @@
     <string name="books">Books</string>
     <string name="register">Register</string>
     <string name="sign">Sign In</string>
-    <string name="get_info">Get Book Info</string>
+    <string name="get_info">Get Book Info  </string>
     <string name="publish">Publish Book</string>
     <string name="noThumbnail">No thumbnail was found</string>
-    <string name="noData">Couldn\'t get some data</string>
+    <string name="noData">Couldnt get some data</string>
+
 </resources>
