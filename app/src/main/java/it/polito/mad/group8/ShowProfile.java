@@ -41,6 +41,10 @@ public class ShowProfile extends AppCompatActivity {
     private EditText email;
     private EditText biography;
     private ImageView image;
+    private EditText direction;
+    private EditText province;
+    private EditText city;
+    private EditText cap;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
@@ -60,6 +64,10 @@ public class ShowProfile extends AppCompatActivity {
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         biography = findViewById(R.id.bio);
+        direction = findViewById(R.id.direction);
+        city = findViewById(R.id.city);
+        province = findViewById(R.id.province);
+        cap = findViewById(R.id.cap);
         mNavigationView = findViewById(R.id.nav_view);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout,R.string.open,R.string.close);
@@ -131,6 +139,10 @@ public class ShowProfile extends AppCompatActivity {
                 intent.putExtra("name", name.getText().toString());
                 intent.putExtra("email", email.getText().toString());
                 intent.putExtra("bio", biography.getText().toString());
+                intent.putExtra("direction", direction.getText().toString());
+                intent.putExtra("city", city.getText().toString());
+                intent.putExtra("province", province.getText().toString());
+                intent.putExtra("cap", cap.getText().toString());
                 startActivity(intent);
                 return true;
         }
@@ -160,9 +172,17 @@ public class ShowProfile extends AppCompatActivity {
             this.user.setName(dataSnapshot.getValue(User.class).getName());
             this.user.setEmail(dataSnapshot.getValue(User.class).getEmail());
             this.user.setBiography(dataSnapshot.getValue(User.class).getBiography());
+            this.user.setDirection(dataSnapshot.getValue(User.class).getDirection());
+            this.user.setCity(dataSnapshot.getValue(User.class).getCity());
+            this.user.setProvince(dataSnapshot.getValue(User.class).getProvince());
+            this.user.setCap(dataSnapshot.getValue(User.class).getCap());
             this.name.setText(user.getName());
             this.email.setText(user.getEmail());
             this.biography.setText(user.getBiography());
+            this.direction.setText(user.getDirection());
+            this.city.setText(user.getCity());
+            this.province.setText(user.getProvince());
+            this.cap.setText(user.getCap());
             Picasso.get().load(dataSnapshot.getValue(User.class).getImageUri()).into(image);
 
             setHeaderDrawer();

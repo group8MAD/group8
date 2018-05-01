@@ -2,7 +2,15 @@
     <string name="app_name">BookSharing</string>
     <string name="edit">Edit</string>
     <string name="name">Name</string>
-    <string name="nameHint">Insert you name here</string>
+    <string name="direction">Direction</string>
+    <string name="city">City</string>
+    <string name="province">Province</string>
+    <string name="cap">CAP</string>
+    <string name="directionHint">Insert your direction here</string>
+    <string name="cityHint">Insert your city here</string>
+    <string name="provinceHint">Insert your province here</string>
+    <string name="capHint">Insert your CAP here</string>
+    <string name="nameHint">Insert your name here</string>
     <string name="save">Save</string>
     <string name="email">Email</string>
     <string name="emailHint">Insert your email here</string>

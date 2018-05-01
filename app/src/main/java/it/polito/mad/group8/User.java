@@ -13,18 +13,33 @@ public class User {
     private String email;
     private String biography;
     private String imageUri;
+    private String direction;
+    private String province;
+    private String city;
+    private String cap;
 
     public User() {
         this.name = "";
         this.email = "";
         this.biography = "";
         this.imageUri = "";
+        this.cap = "";
+        this.city = "";
+        this.direction="";
+        this.province="";
     }
 
-    public User(String name, String email, String biography) {
+
+    public User(String name, String email, String biography, String direction, String province, String city, String cap) {
         this.name = name;
         this.email = email;
         this.biography = biography;
+
+        this.direction=direction;
+        this.province = province;
+        this.city= city;
+        this.cap=cap;
+
     }
 
     public String getName() {
@@ -57,5 +72,38 @@ public class User {
 
     public void setImageUri(String imageUri) {
         this.imageUri = imageUri;
+    }
+
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCap() {
+        return cap;
+    }
+
+    public void setCap(String cap) {
+        this.cap = cap;
     }
 }
