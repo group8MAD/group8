@@ -183,6 +183,9 @@ public class ShowProfile extends AppCompatActivity {
             this.city.setText(user.getCity());
             this.province.setText(user.getProvince());
             this.cap.setText(user.getCap());
+
+            //check if imageUrl is empty
+            //if it is don't load it because this will make the app crash
             if(!dataSnapshot.getValue(User.class).getImageUri().isEmpty())
                 Picasso.get().load(dataSnapshot.getValue(User.class).getImageUri()).into(image);
 
