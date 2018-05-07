@@ -183,7 +183,8 @@ public class ShowProfile extends AppCompatActivity {
             this.city.setText(user.getCity());
             this.province.setText(user.getProvince());
             this.cap.setText(user.getCap());
-            Picasso.get().load(dataSnapshot.getValue(User.class).getImageUri()).into(image);
+            if(!dataSnapshot.getValue(User.class).getImageUri().isEmpty())
+                Picasso.get().load(dataSnapshot.getValue(User.class).getImageUri()).into(image);
 
             setHeaderDrawer();
         }
