@@ -438,13 +438,21 @@ public class BookActivity extends AppCompatActivity {
                         //adding owner and book condition if there is already a book in the database
                         //path /books/{bookISBN}/users/{userID}/condition
                         dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue(condition);
+                        //adding book to user in database
+                        //path /users/{userID}/books/{bookISBN}/condition
+                        dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
+                                .child(isbn).child("condition").setValue(condition);
                     } else {
                         //adding book
                         //path /books/{bookISBN}
                         dataSnapshot.getRef().child(isbn).setValue(book);
                         //adding owner and book condition
                         //path /books/{bookISBN}/users/{userID}/condition
-                        dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue("Condition should go here");
+                        dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue(condition);
+                        //adding book to user in database
+                        //path /users/{userID}/books/{bookISBN}/condition
+                        dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
+                                                        .child(isbn).child("condition").setValue(condition);
                     }
                 }else{
                     Toast.makeText(BookActivity.this,R.string.bookNotValid,Toast.LENGTH_LONG).show();
