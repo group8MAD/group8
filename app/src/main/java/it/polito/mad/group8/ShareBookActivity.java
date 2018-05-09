@@ -10,7 +10,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -118,11 +117,13 @@ public class ShareBookActivity extends AppCompatActivity {
         publish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String options[] = new String[] {getResources().getString(R.string.asNew),
+                final String options[] = new String[] {
+                        getResources().getString(R.string.asNew),
                         getResources().getString(R.string.veryGood),
                         getResources().getString(R.string.good),
                         getResources().getString(R.string.fair),
-                        getResources().getString(R.string.poor)};
+                        getResources().getString(R.string.poor)
+                };
 
                 choice = 2;
 
@@ -155,6 +156,7 @@ public class ShareBookActivity extends AppCompatActivity {
 
             }
         });
+
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -189,30 +191,9 @@ public class ShareBookActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout,R.string.open,R.string.close);
+        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Load the search menu
-        getMenuInflater().inflate(R.menu.menu_search, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                // User pressed the search button
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                // User changed the text
-                Log.i("well", " this worked");
-                return false;
-            }
-        });
 
         return super.onCreateOptionsMenu(menu);
     }
