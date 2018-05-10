@@ -3,7 +3,7 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/nav_books"
+            android:id="@+id/nav_share_books_not_logged"
             android:icon="@drawable/ic_book_24dp"
             android:title="@string/books" />
 

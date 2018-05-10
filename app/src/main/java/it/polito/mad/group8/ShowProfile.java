@@ -66,19 +66,28 @@ public class ShowProfile extends AppCompatActivity {
         city = findViewById(R.id.city);
         province = findViewById(R.id.province);
         cap = findViewById(R.id.cap);
-        mNavigationView = findViewById(R.id.nav_view);
         mDrawerLayout = findViewById(R.id.drawer_layout);
+        mNavigationView = findViewById(R.id.nav_view);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout,R.string.open,R.string.close);
         user = new User();
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                 switch (item.getItemId()){
-                    case R.id.nav_books_logged:
+                    case R.id.nav_profile:
+                        mDrawerLayout.closeDrawers();
+                        return true;
+
+                    case R.id.nav_share_books_logged:
                         finish();
                         startActivity(new Intent(ShowProfile.this, ShareBookActivity.class));
+                        return true;
+
+                    case R.id.nav_search_books:
+                        startActivity(new Intent(ShowProfile.this, SearchBookActivity.class));
                         return true;
 
                     case R.id.logout:

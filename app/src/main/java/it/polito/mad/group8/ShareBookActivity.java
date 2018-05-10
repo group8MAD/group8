@@ -54,7 +54,7 @@ public class ShareBookActivity extends AppCompatActivity {
 
     public final int SIGN_IN = 1000;
 
-    private DrawerLayout mDrawerLayout;
+    private DrawerLayout mDrawerLayout; // Layout User Interface
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
     private User user;
@@ -166,6 +166,14 @@ public class ShareBookActivity extends AppCompatActivity {
                         startProfileActivity();
                         return true;
 
+                    case R.id.nav_share_books_not_logged:
+                        mDrawerLayout.closeDrawers();
+                        return true;
+
+                    case R.id.nav_search_books:
+                        startActivity(new Intent(ShareBookActivity.this, SearchBookActivity.class));
+                        return true;
+
                     case R.id.logout:
                         signOut();
                         return true;
@@ -253,6 +261,8 @@ public class ShareBookActivity extends AppCompatActivity {
         finish();
         startActivity(intent);
     }
+
+    //Update the interface in case of signing in or out
     public void updateUi(FirebaseUser currentUser){
         if (currentUser != null){
             this.userID = currentUser.getUid();

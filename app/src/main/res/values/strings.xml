@@ -42,5 +42,7 @@
     <string name="usageDescription">To get information about the book you want to share, enter the ISBN code in the space provided or scan the barcode on the back of the book</string>
     <string name="notSignedIn">If you want to share a book Sign In first!</string>
     <string name="title_activity_search_book">SearchBookActivity</string>
+    <string name="search_hint">Search for...</string>
+    <string name="search_button">Search</string>
 
 </resources>

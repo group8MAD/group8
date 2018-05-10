@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1001849645197-lbahu7rllonnvjsv44tgv4snp08blieq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.polito.mad.group8",
+            "certificate_hash": "1026aee703c9fe05996cef0f5c61bc870d695263"
+          }
+        },
+        {
           "client_id": "1001849645197-uc53h0tqcrtpj6570gm6gnd10783afsb.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1001849645197-uc53h0tqcrtpj6570gm6gnd10783afsb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
