@@ -70,7 +70,13 @@ public class SearchBookActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.nav_profile:
+                        finish();
                         startActivity(new Intent(SearchBookActivity.this, ShowProfile.class));
+                        return true;
+
+                    case R.id.nav_user_books:
+                        finish();
+                        startActivity(new Intent(SearchBookActivity.this, ShowBooks.class));
                         return true;
 
                     case R.id.nav_share_books_logged:

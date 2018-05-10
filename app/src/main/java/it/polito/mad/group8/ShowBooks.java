@@ -1,13 +1,21 @@
 package it.polito.mad.group8;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +29,10 @@ import java.util.ArrayList;
 public class ShowBooks extends AppCompatActivity {
 
     private static final String TAG = ShowBooks.class.getName();
+
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mToggle;
+    private NavigationView mNavigationView;
 
     // Add firebase stuff
     private FirebaseDatabase db;
@@ -36,6 +48,47 @@ public class ShowBooks extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_books);
+
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mNavigationView = findViewById(R.id.nav_view);
+        mDrawerLayout.addDrawerListener(mToggle);
+
+        // Creation of the lateral menu
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch (item.getItemId()){
+                    case R.id.nav_profile:
+                        finish();
+                        startActivity(new Intent(ShowBooks.this, ShowProfile.class));
+                        return true;
+
+                    case R.id.nav_user_books:
+                        mDrawerLayout.closeDrawers();
+                        return true;
+
+                    case R.id.nav_share_books_not_logged:
+                        finish();
+                        startActivity(new Intent(ShowBooks.this, ShareBookActivity.class));
+                        return true;
+
+                    case R.id.nav_search_books:
+                        finish();
+                        startActivity(new Intent(ShowBooks.this, SearchBookActivity.class));
+                        return true;
+
+                    case R.id.logout:
+                        signOut();
+                        return true;
+
+                    default:
+                        mDrawerLayout.closeDrawers();
+                }
+                return true;
+            }
+        });
+
 
         list = (ListView) findViewById(R.id.listview);
 
@@ -79,6 +132,7 @@ public class ShowBooks extends AppCompatActivity {
 
     }
 
+
     private void showData(DataSnapshot dataSnapshot) {
         for (DataSnapshot ds : dataSnapshot.getChildren()){
             User uInfo = new User();
@@ -100,6 +154,19 @@ public class ShowBooks extends AppCompatActivity {
             list.setAdapter(adapter);
         }
     }
+
+    public void signOut(){
+        mDrawerLayout.closeDrawers();
+        AuthUI.getInstance()
+                .signOut(ShowBooks.this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                        startActivity(new Intent(ShowBooks.this, ShareBookActivity.class));
+                    }
+                });
+    }
+
 
     @Override
     protected void onStart() {

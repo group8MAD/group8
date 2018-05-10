@@ -15,7 +15,7 @@
     <string name="logout">Logout</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
-    <string name="books">Condividi libro</string>
+    <string name="share_books">Condividi libro</string>
     <string name="sign">Accedi</string>
     <string name="publish">Condividi Libro</string>
     <string name="insertIsbn">(Inserire codice ISBN)</string>

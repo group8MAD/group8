@@ -89,6 +89,9 @@ public class ShareBookActivity extends AppCompatActivity {
         book = new Book();
         booksRef = database.getReference("books/");
 
+        // Updating of the UI in case os arriving from another activity
+        updateUi(FirebaseAuth.getInstance().getCurrentUser());
+
         title = findViewById(R.id.title);
         authors = findViewById(R.id.authors);
         publisher = findViewById(R.id.publisher);
@@ -166,11 +169,17 @@ public class ShareBookActivity extends AppCompatActivity {
                         startProfileActivity();
                         return true;
 
+                    case R.id.nav_user_books:
+                        finish();
+                        startActivity(new Intent(ShareBookActivity.this, ShowBooks.class));
+                        return true;
+
                     case R.id.nav_share_books_not_logged:
                         mDrawerLayout.closeDrawers();
                         return true;
 
                     case R.id.nav_search_books:
+                        finish();
                         startActivity(new Intent(ShareBookActivity.this, SearchBookActivity.class));
                         return true;
 
