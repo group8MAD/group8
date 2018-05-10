@@ -1,7 +1,6 @@
 package it.polito.mad.group8;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import java.util.ArrayList;
 
 /**
  * Created by alvaro on 13/4/18.
@@ -18,6 +17,8 @@ public class User {
     private String city;
     private String cap;
 
+    private ArrayList<Book> booksSaved; //if we create an arraylist of books that the user saves and each time, the user saves a new book in the arraylist
+
     public User() {
         this.name = "";
         this.email = "";
@@ -27,6 +28,7 @@ public class User {
         this.city = "";
         this.direction="";
         this.province="";
+
     }
 
 
@@ -39,6 +41,7 @@ public class User {
         this.province = province;
         this.city= city;
         this.cap=cap;
+
 
     }
 
@@ -106,4 +109,33 @@ public class User {
     public void setCap(String cap) {
         this.cap = cap;
     }
+
+    public ArrayList<Book> getBooksSaved() {
+        return booksSaved;
+    }
+
+    public void setBooksSaved(ArrayList<Book> booksSaved) {
+
+        for(Book book : booksSaved){
+            this.booksSaved.add(book);
+        }
+
+    }
+
+    public String printBooksSaved(){
+        String list = "";
+        for(Book book: booksSaved){
+            list = list.concat(book.getTitle().toString() +",");
+        }
+        return list;
+    }
+
+    public ArrayList<Book> getBookList(){
+        ArrayList<Book> list = new ArrayList<Book>();
+        for(Book book : booksSaved){
+            list.add(book);
+        }
+        return list;
+    }
+
 }

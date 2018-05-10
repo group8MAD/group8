@@ -13,8 +13,8 @@
         android:required="true" />
 
     <application
-        android:hardwareAccelerated="true"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -32,12 +32,11 @@
             android:name=".EditProfile"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity" />
-        <activity android:name="com.journeyapps.barcodescanner.CaptureActivity"
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
-            tools:replace="screenOrientation"
-            />
+            tools:replace="screenOrientation" />
+        <activity android:name=".ShowBooks"></activity>
     </application>
-
-
 
 </manifest>

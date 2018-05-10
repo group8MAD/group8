@@ -284,6 +284,7 @@ public class ShareBookActivity extends AppCompatActivity {
             this.user.setName(dataSnapshot.getValue(User.class).getName());
             this.user.setEmail(dataSnapshot.getValue(User.class).getEmail());
             this.user.setBiography(dataSnapshot.getValue(User.class).getBiography());
+
             setHeaderDrawer();
         }
     }
@@ -463,6 +464,7 @@ public class ShareBookActivity extends AppCompatActivity {
         book.setEditionYear(savedInstanceState.getString("year"));
         book.setThumbnail(savedInstanceState.getString("thumbnail"));
         this.isbn = savedInstanceState.getString("isbn");
+      // user.setBooksSaved(savedInstanceState.getStringArrayList("title of the books"));
 
 
         title.setText(book.getTitle());
