@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.PersistableBundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -20,7 +18,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,7 +50,7 @@ import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class BookActivity extends AppCompatActivity {
+public class ShareBookActivity extends AppCompatActivity {
 
     public final int SIGN_IN = 1000;
 
@@ -85,7 +82,7 @@ public class BookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.user = new User();
-        setContentView(R.layout.activity_book);
+        setContentView(R.layout.activity_share_book);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
         mDrawerLayout.addDrawerListener(mToggle);
@@ -105,7 +102,7 @@ public class BookActivity extends AppCompatActivity {
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new IntentIntegrator(BookActivity.this).setOrientationLocked(true).initiateScan();
+                new IntentIntegrator(ShareBookActivity.this).setOrientationLocked(true).initiateScan();
             }
         });
 
@@ -120,15 +117,17 @@ public class BookActivity extends AppCompatActivity {
         publish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String options[] = new String[] {getResources().getString(R.string.asNew),
+                final String options[] = new String[] {
+                        getResources().getString(R.string.asNew),
                         getResources().getString(R.string.veryGood),
                         getResources().getString(R.string.good),
                         getResources().getString(R.string.fair),
-                        getResources().getString(R.string.poor)};
+                        getResources().getString(R.string.poor)
+                };
 
                 choice = 2;
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(BookActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ShareBookActivity.this);
                 builder.setTitle(R.string.dialogTitle)
                         .setPositiveButton(R.string.publish, new DialogInterface.OnClickListener() {
                             @Override
@@ -136,7 +135,7 @@ public class BookActivity extends AppCompatActivity {
                                 if(FirebaseAuth.getInstance().getCurrentUser()!=null){
                                     publishBook(options[choice]);
                                 }else{
-                                    Toast.makeText(BookActivity.this,R.string.notSignedIn,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(ShareBookActivity.this,R.string.notSignedIn,Toast.LENGTH_LONG).show();
                                 }
                             }
                         })
@@ -157,6 +156,7 @@ public class BookActivity extends AppCompatActivity {
 
             }
         });
+
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -190,13 +190,12 @@ public class BookActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout,R.string.open,R.string.close);
+
+        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         return super.onCreateOptionsMenu(menu);
-
     }
 
     @Override
@@ -240,7 +239,7 @@ public class BookActivity extends AppCompatActivity {
     public void signOut(){
         mDrawerLayout.closeDrawers();
         AuthUI.getInstance()
-                .signOut(BookActivity.this)
+                .signOut(ShareBookActivity.this)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         updateUi(FirebaseAuth.getInstance().getCurrentUser());
@@ -250,7 +249,7 @@ public class BookActivity extends AppCompatActivity {
 
     //Switching to ShowProfile activity
     public void startProfileActivity(){
-        Intent intent = new Intent(BookActivity.this,ShowProfile.class);
+        Intent intent = new Intent(ShareBookActivity.this,ShowProfile.class);
         finish();
         startActivity(intent);
     }
@@ -303,7 +302,7 @@ public class BookActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            pd = new ProgressDialog(BookActivity.this);
+            pd = new ProgressDialog(ShareBookActivity.this);
             pd.setMessage("Please wait");
             pd.setCancelable(false);
             pd.show();
@@ -382,7 +381,7 @@ public class BookActivity extends AppCompatActivity {
 
 
             }catch (JSONException e){  //throw if some data doesn't exist
-                Toast.makeText(BookActivity.this, R.string.noData, Toast.LENGTH_LONG).show();
+                Toast.makeText(ShareBookActivity.this, R.string.noData, Toast.LENGTH_LONG).show();
             }
             //trying to get book thumbnail
             try {
@@ -390,7 +389,7 @@ public class BookActivity extends AppCompatActivity {
                 String imageInfo = object.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo").getJSONObject("imageLinks").getString("thumbnail");
                 book.setThumbnail(imageInfo);
             }catch (JSONException e){
-                Toast.makeText(BookActivity.this,R.string.noThumbnail, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ShareBookActivity.this,R.string.noThumbnail, Toast.LENGTH_SHORT).show();
             }
 
 
@@ -416,16 +415,24 @@ public class BookActivity extends AppCompatActivity {
                         //adding owner and book condition if there is already a book in the database
                         //path /books/{bookISBN}/users/{userID}/condition
                         dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue(condition);
+                        //adding book to user in database
+                        //path /users/{userID}/books/{bookISBN}/condition
+                        dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
+                                .child(isbn).child("condition").setValue(condition);
                     } else {
                         //adding book
                         //path /books/{bookISBN}
                         dataSnapshot.getRef().child(isbn).setValue(book);
                         //adding owner and book condition
                         //path /books/{bookISBN}/users/{userID}/condition
-                        dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue("Condition should go here");
+                        dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue(condition);
+                        //adding book to user in database
+                        //path /users/{userID}/books/{bookISBN}/condition
+                        dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
+                                                        .child(isbn).child("condition").setValue(condition);
                     }
                 }else{
-                    Toast.makeText(BookActivity.this,R.string.bookNotValid,Toast.LENGTH_LONG).show();
+                    Toast.makeText(ShareBookActivity.this,R.string.bookNotValid,Toast.LENGTH_LONG).show();
                 }
             }
             @Override

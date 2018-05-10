@@ -26,8 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -80,7 +78,7 @@ public class ShowProfile extends AppCompatActivity {
                 switch (item.getItemId()){
                     case R.id.nav_books_logged:
                         finish();
-                        startActivity(new Intent(ShowProfile.this, BookActivity.class));
+                        startActivity(new Intent(ShowProfile.this, ShareBookActivity.class));
                         return true;
 
                     case R.id.logout:
@@ -160,7 +158,7 @@ public class ShowProfile extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         finish();
-                        startActivity(new Intent(ShowProfile.this, BookActivity.class));
+                        startActivity(new Intent(ShowProfile.this, ShareBookActivity.class));
                     }
                 });
     }
@@ -183,7 +181,11 @@ public class ShowProfile extends AppCompatActivity {
             this.city.setText(user.getCity());
             this.province.setText(user.getProvince());
             this.cap.setText(user.getCap());
-            Picasso.get().load(dataSnapshot.getValue(User.class).getImageUri()).into(image);
+
+            //check if imageUrl is empty
+            //if it is don't load it because this will make the app crash
+            if(!dataSnapshot.getValue(User.class).getImageUri().isEmpty())
+                Picasso.get().load(dataSnapshot.getValue(User.class).getImageUri()).into(image);
 
             setHeaderDrawer();
         }

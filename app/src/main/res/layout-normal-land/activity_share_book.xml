@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".BookActivity">
+    tools:context=".ShareBookActivity">
 
 
     <android.support.constraint.ConstraintLayout
