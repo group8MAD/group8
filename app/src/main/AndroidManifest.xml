@@ -20,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ShareBookActivity">
+        <activity android:name=".SearchBookActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,8 +37,7 @@
             tools:replace="screenOrientation"
             />
         <activity android:name=".ShowBooks"></activity>
-        <activity
-            android:name=".SearchBookActivity" />
+        <activity android:name=".ShareBookActivity" />
     </application>
 
 

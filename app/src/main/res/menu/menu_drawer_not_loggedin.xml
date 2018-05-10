@@ -3,9 +3,9 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/nav_share_books_not_logged"
+            android:id="@+id/nav_search_books"
             android:icon="@drawable/ic_book_24dp"
-            android:title="@string/share_books" />
+            android:title="@string/search_books" />
 
         <item
             android:id="@+id/sign"

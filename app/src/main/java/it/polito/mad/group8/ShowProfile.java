@@ -167,7 +167,7 @@ public class ShowProfile extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         finish();
-                        startActivity(new Intent(ShowProfile.this, ShareBookActivity.class));
+                        startActivity(new Intent(ShowProfile.this, SearchBookActivity.class));
                     }
                 });
     }

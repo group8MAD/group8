@@ -174,7 +174,7 @@ public class ShareBookActivity extends AppCompatActivity {
                         startActivity(new Intent(ShareBookActivity.this, ShowBooks.class));
                         return true;
 
-                    case R.id.nav_share_books_not_logged:
+                    case R.id.nav_share_books_logged:
                         mDrawerLayout.closeDrawers();
                         return true;
 

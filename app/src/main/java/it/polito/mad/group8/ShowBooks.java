@@ -68,7 +68,7 @@ public class ShowBooks extends AppCompatActivity {
                         mDrawerLayout.closeDrawers();
                         return true;
 
-                    case R.id.nav_share_books_not_logged:
+                    case R.id.nav_share_books_logged:
                         finish();
                         startActivity(new Intent(ShowBooks.this, ShareBookActivity.class));
                         return true;
@@ -162,7 +162,7 @@ public class ShowBooks extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
                         finish();
-                        startActivity(new Intent(ShowBooks.this, ShareBookActivity.class));
+                        startActivity(new Intent(ShowBooks.this, SearchBookActivity.class));
                     }
                 });
     }

@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -24,16 +25,21 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.text.ParseException;
 
-public class SearchBookActivity extends AppCompatActivity {
+import de.hdodenhof.circleimageview.CircleImageView;
 
+public class SearchBookActivity extends AppCompatActivity {
+    public final int SIGN_IN = 1000;
     public static final String TAG = SearchBookActivity.class.getName();
 
     // Add Layout and Navigation menu
@@ -42,55 +48,31 @@ public class SearchBookActivity extends AppCompatActivity {
     private NavigationView mNavigationView;
 
     // Add firebase stuff
-    private FirebaseDatabase db;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
     private DatabaseReference myRef;
 
+    //User...is initialized in updateUi if the user is logged in
+    private User user = new User();;
+    private String userID;
+    private DatabaseReference usersRef;
+
+
     // Add widgets
-    private EditText filter; // Word to be searched for
-    private Button button; // Searching button
-    private ProgressBar bar; // Progress bar
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_book);
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
         mDrawerLayout.addDrawerListener(mToggle);
 
-        //declare the db reference object to access the db (if not signed in, not usable)
-        auth= FirebaseAuth.getInstance();
-        db = FirebaseDatabase.getInstance();
-        myRef = db.getReference();
-        FirebaseUser user = auth.getCurrentUser();
-
-        button = findViewById(R.id.search_button);
-        filter = findViewById(R.id.search_box);
-        bar = findViewById(R.id.progress_bar);
-
-
-        // Give utility to the button
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClik");
-                // Send a message that indicates that app is charging
-                Toast.makeText(SearchBookActivity.this, "Charging", Toast.LENGTH_SHORT).show();
-                // Retrieve the text introduced in the TextView to be searched
-                String words= filter.getText().toString();
-                //Create an object AsyncTask  to be able to execute the threads en second plane
-                RetrieveRssTask task = new RetrieveRssTask();
-                task.execute(url, words);
-            }
-        });
-
-
+        updateUi(FirebaseAuth.getInstance().getCurrentUser());
 
         // Creation of the lateral menu
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -121,6 +103,10 @@ public class SearchBookActivity extends AppCompatActivity {
                         signOut();
                         return true;
 
+                    case R.id.sign:
+                        signIn();
+                        return true;
+
                     default:
                         mDrawerLayout.closeDrawers();
                 }
@@ -128,69 +114,95 @@ public class SearchBookActivity extends AppCompatActivity {
             }
         });
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
+
+    }
+    //This is useful for when you're not logged in and you log in
+    //if you don't updateUi onStart lateral menu won't change
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateUi(FirebaseAuth.getInstance().getCurrentUser());
     }
 
     public void signOut(){
         mDrawerLayout.closeDrawers();
         AuthUI.getInstance()
-                .signOut(SearchBookActivity.this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        finish();
-                        startActivity(new Intent(SearchBookActivity.this, ShareBookActivity.class));
-                    }
-                });
+                .signOut(SearchBookActivity.this);
+        updateUi(FirebaseAuth.getInstance().getCurrentUser());
     }
 
-    // Private class to retrieve the books that have been searched for
-    private class RetrieveRssTask extends AsyncTask<String, Void, Void> {
+    public void signIn(){
+        mDrawerLayout.closeDrawers();
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setIsSmartLockEnabled(false)
+                        .build(),
+                SIGN_IN);
 
-        @Override
-        protected void onPreExecute() {
-            bar.setVisibility(View.VISIBLE);
-            Log.d(TAG, "Entering on onPreExecute");
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
+        mToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (mToggle.onOptionsItemSelected(item)){
+            return true;
         }
+        return super.onOptionsItemSelected(item);
+    }
 
-        @Override
-        protected Void doInBackground(String... strings) {
-            Log.d(TAG, "Entering on doInBackground");
-            FeedDownloader rss = new FeedDownloader();
-            try {
-                List<RssContent.EntryRss> entries = rss.loadXmlFromNetwork(strings[0]);
-                FilteredRssFeed.reset(strings[1]);
-                for (RssContent.EntryRss item : entries) {
-                    FilteredRssFeed.add(item);
-                    Log.d(TAG, " item added");
+    //Update the interface in case of signing in or out
+    public void updateUi(FirebaseUser currentUser){
+        if (currentUser != null){
+            this.userID = currentUser.getUid();
+            mNavigationView.getMenu().clear();
+            mNavigationView.inflateMenu(R.menu.menu_drawer_loggedin);
+            usersRef = database.getReference("users/"+this.userID);
+            usersRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    getData(dataSnapshot);
                 }
-            } catch (IOException e) {
-                Log.d(TAG, e.getMessage());
-                e.printStackTrace();
-            } catch (ParseException e) {
-                Log.d(TAG, e.getMessage());
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                Log.d(TAG, e.getMessage());
-                e.printStackTrace();
-            }
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(Void v) {
-            Log.d(TAG, "Entering on the method onPostExecute");
-            bar.setVisibility(View.INVISIBLE);
-            // Creation of the intent EXPLICIT to change to ListViewActivity
-            Intent intent = new Intent(SearchBookActivity.this, ListViewActivity.class);
-            startActivity(intent);
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }else{
+            mNavigationView.getMenu().clear();
+            mNavigationView.inflateMenu(R.menu.menu_drawer_not_loggedin);
         }
+    }
+    //Getting user data to be shown in the header
+    private void getData(DataSnapshot dataSnapshot){
+        if(!dataSnapshot.exists()){
+            usersRef.setValue(this.user);
+        }else{
+            this.user.setName(dataSnapshot.getValue(User.class).getName());
+            this.user.setEmail(dataSnapshot.getValue(User.class).getEmail());
+            this.user.setBiography(dataSnapshot.getValue(User.class).getBiography());
+
+            setHeaderDrawer();
+        }
+    }
+
+    public void setHeaderDrawer(){
+        View headerView = mNavigationView.getHeaderView(0);
+
+        CircleImageView image = headerView.findViewById(R.id.header_image);
     }
 
 }
