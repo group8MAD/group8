@@ -45,9 +45,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="ff9800" />
-                                      <entry key="foregroundAssetType" value="CLIP_ART" />
-                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/ic_launcher/web_hi_res_512.png" />
+                                      <entry key="backgroundColor" value="ffffff" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/118-512.png" />
                                       <entry key="legacyIconShape" value="CIRCLE" />
                                       <entry key="webIconShape" value="CIRCLE" />
                                     </map>
