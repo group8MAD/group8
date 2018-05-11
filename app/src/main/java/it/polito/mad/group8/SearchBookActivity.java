@@ -153,6 +153,10 @@ public class SearchBookActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(BookHolder holder, int position, Book model) {
                 holder.setTitle(model.getTitle());
+                holder.setAuthors(model.getAuthors());
+                holder.setPublisher(model.getPublisher());
+                holder.setYear(model.getEditionYear());
+                holder.setThumbnail(model.getThumbnail());
             }
         };
         adapter.startListening();
