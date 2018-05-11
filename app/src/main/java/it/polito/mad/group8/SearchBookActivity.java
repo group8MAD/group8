@@ -16,11 +16,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,7 +32,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -123,13 +127,18 @@ public class SearchBookActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         updateUi(FirebaseAuth.getInstance().getCurrentUser());
+        /* TODO Check the flow of activities and if updateUi here is neccesary */
     }
 
     public void signOut(){
         mDrawerLayout.closeDrawers();
         AuthUI.getInstance()
-                .signOut(SearchBookActivity.this);
-        updateUi(FirebaseAuth.getInstance().getCurrentUser());
+                .signOut(SearchBookActivity.this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(@NonNull Task<Void> task) {
+                        updateUi(FirebaseAuth.getInstance().getCurrentUser());
+                    }
+                });
     }
 
     public void signIn(){
@@ -141,6 +150,22 @@ public class SearchBookActivity extends AppCompatActivity {
                         .build(),
                 SIGN_IN);
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else if(requestCode == SIGN_IN) {
+                // Update the UI if receive the corresponding parameter SIGN_IN from startActivityForResult
+                updateUi(FirebaseAuth.getInstance().getCurrentUser());
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+
+        }
     }
 
 

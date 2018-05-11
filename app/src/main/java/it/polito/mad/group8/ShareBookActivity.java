@@ -203,6 +203,7 @@ public class ShareBookActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         updateUi(FirebaseAuth.getInstance().getCurrentUser());
+        /* TODO Check the flow of activities and if updateUi here is neccesary */
     }
 
     @Override
@@ -230,6 +231,9 @@ public class ShareBookActivity extends AppCompatActivity {
         if(result != null) {
             if(result.getContents() == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else if(requestCode == SIGN_IN) {
+                // Update the UI if receive the corresponding parameter SIGN_IN from startActivityForResult
+                updateUi(FirebaseAuth.getInstance().getCurrentUser());
             } else {
                 isbn = result.getContents();
                 new JsonTask().execute("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn);
