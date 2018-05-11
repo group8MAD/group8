@@ -10,17 +10,24 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +36,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -60,7 +68,7 @@ public class SearchBookActivity extends AppCompatActivity {
 
 
     // Add widgets
-
+    RecyclerView recyclerView;
 
 
     @Override
@@ -71,6 +79,8 @@ public class SearchBookActivity extends AppCompatActivity {
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
         mDrawerLayout.addDrawerListener(mToggle);
+
+        recyclerView = findViewById(R.id.recyclerView);
 
         updateUi(FirebaseAuth.getInstance().getCurrentUser());
 
@@ -113,6 +123,40 @@ public class SearchBookActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+
+
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        Query query = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("books");
+
+
+        FirebaseRecyclerOptions<Book> options =
+                new FirebaseRecyclerOptions.Builder<Book>()
+                        .setQuery(query, Book.class)
+                        .build();
+
+        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Book, BookHolder>(options) {
+            @Override
+            public BookHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                // Create a new instance of the ViewHolder, in this case we are using a custom
+                // layout called R.layout.message for each item
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.book, parent, false);
+
+                return new BookHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(BookHolder holder, int position, Book model) {
+                holder.setTitle(model.getTitle());
+            }
+        };
+        adapter.startListening();
+        recyclerView.setAdapter(adapter);
 
 
     }

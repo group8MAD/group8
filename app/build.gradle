@@ -35,6 +35,7 @@ dependencies {
     implementation "com.google.firebase:firebase-storage:12.0.1"
     implementation 'com.google.android.gms:play-services-auth:12.0.1'
     implementation 'com.firebaseui:firebase-ui-auth:3.3.0'
+    implementation 'com.firebaseui:firebase-ui-database:3.3.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation('com.journeyapps:zxing-android-embedded:3.6.0') { transitive = false }
     implementation 'com.android.support:appcompat-v7:27.1.1'
