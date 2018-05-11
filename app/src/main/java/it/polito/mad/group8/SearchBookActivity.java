@@ -1,35 +1,26 @@
 package it.polito.mad.group8;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.SearchView;
+
 
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -39,10 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.IOException;
-import java.text.ParseException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -123,44 +111,9 @@ public class SearchBookActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-
-
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        Query query = FirebaseDatabase.getInstance()
-                .getReference()
-                .child("books");
-
-
-        FirebaseRecyclerOptions<Book> options =
-                new FirebaseRecyclerOptions.Builder<Book>()
-                        .setQuery(query, Book.class)
-                        .build();
-
-        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Book, BookHolder>(options) {
-            @Override
-            public BookHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.book, parent, false);
-
-                return new BookHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(BookHolder holder, int position, Book model) {
-                holder.setTitle(model.getTitle());
-                holder.setAuthors(model.getAuthors());
-                holder.setPublisher(model.getPublisher());
-                holder.setYear(model.getEditionYear());
-                holder.setThumbnail(model.getThumbnail());
-            }
-        };
-        adapter.startListening();
-        recyclerView.setAdapter(adapter);
+        getBooks("");
 
 
     }
@@ -197,6 +150,24 @@ public class SearchBookActivity extends AppCompatActivity {
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem item = menu.findItem(R.id.searchBook);
+        SearchView searchView = (SearchView) item.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                getBooks(newText);
+                return false;
+            }
+        });
+
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -251,6 +222,48 @@ public class SearchBookActivity extends AppCompatActivity {
         View headerView = mNavigationView.getHeaderView(0);
 
         CircleImageView image = headerView.findViewById(R.id.header_image);
+    }
+
+
+    public void getBooks(String book){
+
+        Query query = FirebaseDatabase.getInstance()
+                .getReference("books")
+                .orderByChild("title")
+                .startAt(book.toUpperCase())
+                .endAt(book.toUpperCase()+"\uf8ff")
+                ;
+
+
+
+
+        FirebaseRecyclerOptions<Book> options =
+                new FirebaseRecyclerOptions.Builder<Book>()
+                        .setQuery(query, Book.class)
+                        .build();
+
+        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Book, BookHolder>(options) {
+            @Override
+            public BookHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                // Create a new instance of the ViewHolder, in this case we are using a custom
+                // layout called R.layout.message for each item
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.book, parent, false);
+
+                return new BookHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(BookHolder holder, int position, Book model) {
+                holder.setTitle(model.getTitle());
+                holder.setAuthors(model.getAuthors());
+                holder.setPublisher(model.getPublisher());
+                holder.setYear(model.getEditionYear());
+                holder.setThumbnail(model.getThumbnail());
+            }
+        };
+        adapter.startListening();
+        recyclerView.setAdapter(adapter);
     }
 
 }
