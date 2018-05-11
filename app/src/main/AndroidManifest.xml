@@ -38,6 +38,7 @@
             />
         <activity android:name=".ShowBooks"></activity>
         <activity android:name=".ShareBookActivity" />
+        <activity android:name=".SingleShowBookActivity" />
     </application>
 
 
