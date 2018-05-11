@@ -169,10 +169,10 @@ public class ShareBookActivity extends AppCompatActivity {
                         startProfileActivity();
                         return true;
 
-                    case R.id.nav_user_books:
+                    /*case R.id.nav_user_books:
                         finish();
                         startActivity(new Intent(ShareBookActivity.this, ShowBooks.class));
-                        return true;
+                        return true;*/
 
                     case R.id.nav_share_books_logged:
                         mDrawerLayout.closeDrawers();

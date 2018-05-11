@@ -64,9 +64,9 @@ public class ShowBooks extends AppCompatActivity {
                         startActivity(new Intent(ShowBooks.this, ShowProfile.class));
                         return true;
 
-                    case R.id.nav_user_books:
+                    /*case R.id.nav_user_books:
                         mDrawerLayout.closeDrawers();
-                        return true;
+                        return true;*/
 
                     case R.id.nav_share_books_logged:
                         finish();

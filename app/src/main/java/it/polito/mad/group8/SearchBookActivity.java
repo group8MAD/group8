@@ -91,10 +91,10 @@ public class SearchBookActivity extends AppCompatActivity {
                         startActivity(new Intent(SearchBookActivity.this, ShowProfile.class));
                         return true;
 
-                    case R.id.nav_user_books:
+                    /*case R.id.nav_user_books:
                         finish();
                         startActivity(new Intent(SearchBookActivity.this, ShowBooks.class));
-                        return true;
+                        return true;*/
 
                     case R.id.nav_share_books_logged:
                         finish();
