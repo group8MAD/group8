@@ -1,27 +1,25 @@
 package it.polito.mad.group8;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,11 +28,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -57,12 +60,13 @@ public class SearchBookActivity extends AppCompatActivity {
     private User user = new User();;
     private String userID;
     private DatabaseReference usersRef;
-
+    List<Book> books = new ArrayList<>();
 
     // Add widgets
     RecyclerView recyclerView;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,7 +121,8 @@ public class SearchBookActivity extends AppCompatActivity {
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        getBooks("");
+        getBooks();
+
 
 
     }
@@ -186,9 +191,10 @@ public class SearchBookActivity extends AppCompatActivity {
                 return false;
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public boolean onQueryTextChange(String newText) {
-                getBooks(newText);
+                filterBookList(newText);
                 return false;
             }
         });
@@ -250,45 +256,68 @@ public class SearchBookActivity extends AppCompatActivity {
     }
 
 
-    public void getBooks(String book){
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void getBooks(){
 
-        Query query = FirebaseDatabase.getInstance()
-                .getReference("books")
-                .orderByChild("title")
-                .startAt(book.toUpperCase())
-                .endAt(book.toUpperCase()+"\uf8ff")
-                ;
+             FirebaseDatabase.getInstance()
+                     .getReference("books")
+                     .orderByChild("title")
+                     .addListenerForSingleValueEvent(new ValueEventListener() {
+                         @Override
+                         public void onDataChange(DataSnapshot dataSnapshot) {
+                             for (DataSnapshot bookTmp : dataSnapshot.getChildren()){
+                                     Book book = bookTmp.getValue(Book.class);
+                                     Log.e("SingleBookTitle", book.getTitle());
+                                     books.add(book);
+                                 }
+                             SearchBookAdapter adapter = new SearchBookAdapter(books, SearchBookActivity.this);
+                             recyclerView.setAdapter(adapter);
+                             }
+                         @Override
+                         public void onCancelled(DatabaseError databaseError) {
+
+                         }
+                     });
+    }
 
 
 
+    private int matchedKeyWords(Book book, String search){
+        int i = 0;
+        List<String> keyWords = new ArrayList<>();
+        String[] requestedKeyWords = search.toLowerCase().split(" ");
+        keyWords.addAll(Arrays.asList(book.getTitle().toLowerCase().split(" ")));
+        keyWords.addAll(Arrays.asList(book.getAuthors().toLowerCase().split(" ")));
+        keyWords.addAll(Arrays.asList(book.getPublisher().toLowerCase().split(" ")));
+        for (String s : requestedKeyWords){
+            if (keyWords.contains(s)){
+                i++;
+            }
+        }
+        return i;
+    }
 
-        FirebaseRecyclerOptions<Book> options =
-                new FirebaseRecyclerOptions.Builder<Book>()
-                        .setQuery(query, Book.class)
-                        .build();
-
-        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Book, BookHolder>(options) {
-            @Override
-            public BookHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.book, parent, false);
-
-                return new BookHolder(view);
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void filterBookList(String search){
+        if (!search.isEmpty()){
+            Map<Book, Integer> filteredBooks = new HashMap<>();
+           for (Book b: books){
+            int occurrences = matchedKeyWords(b, search);
+            if (occurrences > 0){
+                filteredBooks.put(b,occurrences);
+            }
             }
 
-            @Override
-            protected void onBindViewHolder(BookHolder holder, int position, Book model) {
-                holder.setTitle(model.getTitle());
-                holder.setAuthors(model.getAuthors());
-                holder.setPublisher(model.getPublisher());
-                holder.setYear(model.getEditionYear());
-                holder.setThumbnail(model.getThumbnail());
-            }
-        };
-        adapter.startListening();
-        recyclerView.setAdapter(adapter);
+            SearchBookAdapter searchBookAdapter = new SearchBookAdapter(filteredBooks.entrySet().stream()
+                                                            .sorted((e1, e2)-> e1.getKey().getTitle().compareTo(e2.getKey().getTitle()))
+                                                            .map(e -> e.getKey())
+                                                            .collect(Collectors.toList()), SearchBookActivity.this);
+            recyclerView.setAdapter(searchBookAdapter);
+        }else{
+            SearchBookAdapter searchBookAdapter = new SearchBookAdapter(books,SearchBookActivity.this);
+            recyclerView.setAdapter(searchBookAdapter);
+        }
+
     }
 
 }
