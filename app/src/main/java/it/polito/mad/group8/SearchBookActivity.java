@@ -306,10 +306,11 @@ public class SearchBookActivity extends AppCompatActivity {
             if (occurrences > 0){
                 filteredBooks.put(b,occurrences);
             }
+               Log.e("asd", String.valueOf(occurrences));
             }
 
             SearchBookAdapter searchBookAdapter = new SearchBookAdapter(filteredBooks.entrySet().stream()
-                                                            .sorted((e1, e2)-> e1.getKey().getTitle().compareTo(e2.getKey().getTitle()))
+                                                            .sorted((e1, e2)-> e2.getValue().compareTo(e1.getValue()))
                                                             .map(e -> e.getKey())
                                                             .collect(Collectors.toList()), SearchBookActivity.this);
             recyclerView.setAdapter(searchBookAdapter);
