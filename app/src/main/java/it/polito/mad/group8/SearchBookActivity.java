@@ -119,6 +119,8 @@ public class SearchBookActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        // Assignment of a Layout Manager, in this case, Liner Layout
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         getBooks();
@@ -181,7 +183,10 @@ public class SearchBookActivity extends AppCompatActivity {
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         MenuInflater inflater = getMenuInflater();
+
+        // Inflates the Searching menu and puts the icon of searching on the top bar
         inflater.inflate(R.menu.menu_search, menu);
+        // Gets the id of the icon and gives it functionality
         MenuItem item = menu.findItem(R.id.searchBook);
         SearchView searchView = (SearchView) item.getActionView();
 
@@ -236,6 +241,7 @@ public class SearchBookActivity extends AppCompatActivity {
             mNavigationView.inflateMenu(R.menu.menu_drawer_not_loggedin);
         }
     }
+
     //Getting user data to be shown in the header
     private void getData(DataSnapshot dataSnapshot){
         if(!dataSnapshot.exists()){
@@ -244,6 +250,7 @@ public class SearchBookActivity extends AppCompatActivity {
             this.user.setName(dataSnapshot.getValue(User.class).getName());
             this.user.setEmail(dataSnapshot.getValue(User.class).getEmail());
             this.user.setBiography(dataSnapshot.getValue(User.class).getBiography());
+            /*TODO The field Biography is not include in the file drawer_header.xml*/
 
             setHeaderDrawer();
         }
@@ -301,12 +308,12 @@ public class SearchBookActivity extends AppCompatActivity {
     private void filterBookList(String search){
         if (!search.isEmpty()){
             Map<Book, Integer> filteredBooks = new HashMap<>();
-           for (Book b: books){
-            int occurrences = matchedKeyWords(b, search);
-            if (occurrences > 0){
-                filteredBooks.put(b,occurrences);
-            }
-               Log.e("asd", String.valueOf(occurrences));
+            for (Book b: books){
+                int occurrences = matchedKeyWords(b, search);
+                if (occurrences > 0){
+                    filteredBooks.put(b,occurrences);
+                }
+                Log.e("Number of ocurrences: ", String.valueOf(occurrences));
             }
 
             SearchBookAdapter searchBookAdapter = new SearchBookAdapter(filteredBooks.entrySet().stream()
