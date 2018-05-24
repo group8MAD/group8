@@ -30,7 +30,8 @@ public class User {
         this.city = "";
         this.direction="";
         this.province="";
-        this.nickname ="";
+        int randomno = (int) (Math.random()*27839)+1;
+        this.nickname ="default "+ String.valueOf(randomno);
 
     }
 
