@@ -252,6 +252,7 @@ public class SearchBookActivity extends AppCompatActivity {
             this.user.setName(dataSnapshot.getValue(User.class).getName());
             this.user.setEmail(dataSnapshot.getValue(User.class).getEmail());
             this.user.setBiography(dataSnapshot.getValue(User.class).getBiography());
+            this.user.setNickname(dataSnapshot.getValue(User.class).getNickname());
             /*TODO The field Biography is not include in the file drawer_header.xml*/
 
             setHeaderDrawer();

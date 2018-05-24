@@ -153,6 +153,7 @@ public class ShowProfile extends AppCompatActivity {
                 intent.putExtra("city", city.getText().toString());
                 intent.putExtra("province", province.getText().toString());
                 intent.putExtra("cap", cap.getText().toString());
+                intent.putExtra("nickname", nickname.getText().toString());
                 startActivity(intent);
                 return true;
         }

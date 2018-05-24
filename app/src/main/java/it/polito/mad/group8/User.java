@@ -145,6 +145,7 @@ public class User {
 
     public ArrayList<Book> getBookList(){
         ArrayList<Book> list = new ArrayList<Book>();
+        if(booksSaved !=null)
         for(Book book : booksSaved){
             list.add(book);
         }
