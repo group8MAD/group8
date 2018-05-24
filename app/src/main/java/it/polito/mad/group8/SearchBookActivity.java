@@ -56,10 +56,12 @@ public class SearchBookActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener authListener;
     private DatabaseReference myRef;
 
+
     //User...is initialized in updateUi if the user is logged in
     private User user = new User();;
     private String userID;
     private DatabaseReference usersRef;
+
     List<Book> books = new ArrayList<>();
 
     // Add widgets
@@ -322,7 +324,7 @@ public class SearchBookActivity extends AppCompatActivity {
                                                             .collect(Collectors.toList()), SearchBookActivity.this);
             recyclerView.setAdapter(searchBookAdapter);
         }else{
-            SearchBookAdapter searchBookAdapter = new SearchBookAdapter(books,SearchBookActivity.this);
+            SearchBookAdapter searchBookAdapter = new SearchBookAdapter(books, SearchBookActivity.this);
             recyclerView.setAdapter(searchBookAdapter);
         }
 

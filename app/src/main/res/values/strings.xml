@@ -47,5 +47,7 @@
     <string name="search_button">Search</string>
     <string name="user_books">My books</string>
     <string name="thumbnail_description_SingleShowBookActivity">Thumbnail of the book that is shown</string>
+    <string name="message_button">Write a message</string>
+    <string name="message_button_description">Send a message to the owner of the book</string>
 
 </resources>
