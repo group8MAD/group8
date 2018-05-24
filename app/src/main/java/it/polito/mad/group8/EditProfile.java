@@ -51,6 +51,7 @@ public class EditProfile extends AppCompatActivity {
     private EditText province;
     private EditText city;
     private EditText cap;
+    private EditText nickname;
     private ImageButton image;
     private File imageCacheFile;
     private String userID;
@@ -75,6 +76,7 @@ public class EditProfile extends AppCompatActivity {
         city = findViewById(R.id.city);
         province = findViewById(R.id.province);
         cap = findViewById(R.id.cap);
+        nickname = findViewById(R.id.nickname);
         this.userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         databaseReference = database.getReference("users/"+this.userID);
         storageReference = storage.getReference();
@@ -88,6 +90,7 @@ public class EditProfile extends AppCompatActivity {
         String cityString = getIntent().getStringExtra("city");
         String provinceString = getIntent().getStringExtra("province");
         String capString = getIntent().getStringExtra("cap");
+        String nicknameString = getIntent().getStringExtra("nickname");
 
         //See if the strings saved in the db are not empty, if so, show them in the profile
 
@@ -105,6 +108,8 @@ public class EditProfile extends AppCompatActivity {
             province.setText(provinceString);
         if(capString !=null)
             cap.setText(capString);
+        if(nicknameString != null)
+            nickname.setText(nicknameString);
 
         image.setOnClickListener(myListener);
     }
@@ -253,6 +258,7 @@ public class EditProfile extends AppCompatActivity {
         databaseReference.child("city").setValue(this.city.getText().toString());
         databaseReference.child("province").setValue(this.province.getText().toString());
         databaseReference.child("cap").setValue(this.cap.getText().toString());
+        databaseReference.child("nickname").setValue(this.nickname.getText().toString());
         if (this.downloadUri != null)
             databaseReference.child("imageUri").setValue(this.downloadUri.toString()); //saves the url of the image in the db
 

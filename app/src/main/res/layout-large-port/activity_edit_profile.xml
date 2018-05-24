@@ -65,6 +65,27 @@
             android:maxLength="35"
             android:inputType="textEmailAddress"
             />
+        <TextView
+            android:id="@+id/nicknameDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/nickname"
+            />
+
+        <EditText
+            android:id="@+id/nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="15dp"
+
+            android:hint="@string/emailHint"
+            android:maxLines="2"
+            android:maxLength="35"
+            />
 
            <TextView
             android:id="@+id/directionDescription"

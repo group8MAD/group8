@@ -3,6 +3,8 @@
     <string name="edit">Edit</string>
     <string name="name">Name</string>
     <string name="direction">Direction</string>
+    <string name="nickname">Nickname</string>
+    <string name="nicknameHint">Insert your nickname here</string>
     <string name="city">City</string>
     <string name="province">Province</string>
     <string name="cap">CAP</string>

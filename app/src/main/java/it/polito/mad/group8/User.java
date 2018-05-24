@@ -17,6 +17,8 @@ public class User {
     private String city;
     private String cap;
 
+    private String nickname;
+
     private ArrayList<Book> booksSaved; //if we create an arraylist of books that the user saves and each time, the user saves a new book in the arraylist
 
     public User() {
@@ -28,11 +30,12 @@ public class User {
         this.city = "";
         this.direction="";
         this.province="";
+        this.nickname ="";
 
     }
 
 
-    public User(String name, String email, String biography, String direction, String province, String city, String cap) {
+    public User(String name, String email, String biography, String direction, String province, String city, String cap, String nickname) {
         this.name = name;
         this.email = email;
         this.biography = biography;
@@ -40,6 +43,7 @@ public class User {
         this.direction=direction;
         this.province = province;
         this.city= city;
+        this.nickname = nickname;
         this.cap=cap;
 
 
@@ -69,8 +73,17 @@ public class User {
         this.biography = biography;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public String getImageUri() {
         return imageUri;
+
     }
 
     public void setImageUri(String imageUri) {

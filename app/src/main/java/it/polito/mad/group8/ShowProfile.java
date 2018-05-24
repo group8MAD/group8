@@ -43,6 +43,7 @@ public class ShowProfile extends AppCompatActivity {
     private EditText province;
     private EditText city;
     private EditText cap;
+    private EditText nickname;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
@@ -51,6 +52,7 @@ public class ShowProfile extends AppCompatActivity {
     private Uri imageUri;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref;
+
 
 
     @Override
@@ -66,6 +68,7 @@ public class ShowProfile extends AppCompatActivity {
         city = findViewById(R.id.city);
         province = findViewById(R.id.province);
         cap = findViewById(R.id.cap);
+        nickname = findViewById(R.id.nickname);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout,R.string.open,R.string.close);
@@ -183,6 +186,7 @@ public class ShowProfile extends AppCompatActivity {
             this.user.setCity(dataSnapshot.getValue(User.class).getCity());
             this.user.setProvince(dataSnapshot.getValue(User.class).getProvince());
             this.user.setCap(dataSnapshot.getValue(User.class).getCap());
+            this.user.setNickname(dataSnapshot.getValue(User.class).getNickname());
             this.name.setText(user.getName());
             this.email.setText(user.getEmail());
             this.biography.setText(user.getBiography());
@@ -190,6 +194,7 @@ public class ShowProfile extends AppCompatActivity {
             this.city.setText(user.getCity());
             this.province.setText(user.getProvince());
             this.cap.setText(user.getCap());
+            this.nickname.setText(user.getNickname());
 
             //check if imageUrl is empty
             //if it is don't load it because this will make the app crash
