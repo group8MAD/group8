@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Book {
-
+    private String isbn;
     private String title;
     private String authors;
     private String thumbnail;
@@ -14,6 +14,7 @@ public class Book {
     private String editionYear;
 
     public Book() {
+        this.isbn = "";
         this.title = "";
         this.authors = "";
         this.thumbnail = "";
@@ -21,13 +22,7 @@ public class Book {
         this.editionYear = "";
     }
 
-    public Book(String title, String authors, String thumbnail, String publisher, String editionYear, String condition, String ownerID) {
-        this.title = title;
-        this.authors = authors;
-        this.thumbnail = thumbnail;
-        this.publisher = publisher;
-        this.editionYear = editionYear;
-    }
+
 
     public String getTitle() {
         return title;
@@ -69,4 +64,11 @@ public class Book {
         this.editionYear = editionYear;
     }
 
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
 }

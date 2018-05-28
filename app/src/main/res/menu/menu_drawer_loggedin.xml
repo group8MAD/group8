@@ -18,6 +18,10 @@
             android:icon="@drawable/ic_book_24dp"
             android:title="@string/search_books" />
         <item
+            android:id="@+id/chats"
+            android:icon="@drawable/fui_ic_mail_white_24dp"
+            android:title="@string/chats" />
+        <item
             android:id="@+id/logout"
             android:icon="@mipmap/logout"
             android:title="@string/logout"

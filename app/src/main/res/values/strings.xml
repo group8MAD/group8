@@ -51,5 +51,6 @@
     <string name="thumbnail_description_SingleShowBookActivity">Thumbnail of the book that is shown</string>
     <string name="message_button">Write a message</string>
     <string name="message_button_description">Send a message to the owner of the book</string>
+    <string name="chats">Chats</string>
 
 </resources>

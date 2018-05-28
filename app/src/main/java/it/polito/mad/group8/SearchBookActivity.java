@@ -103,6 +103,10 @@ public class SearchBookActivity extends AppCompatActivity {
                         startActivity(new Intent(SearchBookActivity.this, ShareBookActivity.class));
                         return true;
 
+                    case R.id.chats:
+                        startActivity(new Intent(getApplicationContext(), ChatList.class));
+                        return true;
+
                     case R.id.nav_search_books:
                         mDrawerLayout.closeDrawers();
                         return true;
@@ -277,6 +281,8 @@ public class SearchBookActivity extends AppCompatActivity {
                          public void onDataChange(DataSnapshot dataSnapshot) {
                              for (DataSnapshot bookTmp : dataSnapshot.getChildren()){
                                      Book book = bookTmp.getValue(Book.class);
+                                 assert book != null;
+                                 book.setIsbn(bookTmp.getKey());
                                      Log.e("SingleBookTitle", book.getTitle());
                                      books.add(book);
                                  }

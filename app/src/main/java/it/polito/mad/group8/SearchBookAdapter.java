@@ -48,6 +48,7 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.Bo
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, SingleShowBookActivity.class);
+                intent.putExtra("isbn", book.getIsbn());
                 intent.putExtra("title", holder.title.getText().toString());
                 intent.putExtra("authors", holder.authors.getText().toString());
                 intent.putExtra("publisher", holder.publisher.getText().toString());
