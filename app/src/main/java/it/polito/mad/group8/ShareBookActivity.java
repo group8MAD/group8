@@ -178,6 +178,11 @@ public class ShareBookActivity extends AppCompatActivity {
                         mDrawerLayout.closeDrawers();
                         return true;
 
+                    case R.id.chats:
+                        finish();
+                        startActivity(new Intent(getApplicationContext(), ChatList.class));
+                        return true;
+
                     case R.id.nav_search_books:
                         finish();
                         startActivity(new Intent(ShareBookActivity.this, SearchBookActivity.class));

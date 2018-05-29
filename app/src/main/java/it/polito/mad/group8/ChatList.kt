@@ -88,6 +88,11 @@ class ChatList : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
 
+                R.id.chats -> {
+                    mDrawerLayout!!.closeDrawers()
+                    return@OnNavigationItemSelectedListener true
+                }
+
                 R.id.nav_search_books -> {
                     finish()
                     startActivity(Intent(this@ChatList, SearchBookActivity::class.java))

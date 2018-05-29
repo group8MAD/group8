@@ -104,6 +104,7 @@ public class SearchBookActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.chats:
+                        finish();
                         startActivity(new Intent(getApplicationContext(), ChatList.class));
                         return true;
 

@@ -89,6 +89,11 @@ public class ShowProfile extends AppCompatActivity {
                         startActivity(new Intent(ShowProfile.this, ShareBookActivity.class));
                         return true;
 
+                    case R.id.chats:
+                        finish();
+                        startActivity(new Intent(getApplicationContext(), ChatList.class));
+                        return true;
+
                     case R.id.nav_search_books:
                         startActivity(new Intent(ShowProfile.this, SearchBookActivity.class));
                         return true;
