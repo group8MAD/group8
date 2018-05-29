@@ -91,7 +91,7 @@ public class SingleShowBookActivity extends AppCompatActivity {
                 String uid2 = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                 Intent intent = new Intent(getApplication(), ChatRoom.class);
                 intent.putExtra("contactUid", uid1);
-
+                intent.putExtra("bookIsbn", isbn);
 
                 FirebaseDatabase.getInstance().getReference("chats/")
                                                 .addListenerForSingleValueEvent(new ValueEventListener() {

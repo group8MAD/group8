@@ -62,8 +62,8 @@ class ChatList : AppCompatActivity() {
         mNavigationView = findViewById(R.id.nav_view)
 
         recyclerView = findViewById(R.id.recyclerView)
-        chatListAdaptor = ChatListAdaptor(applicationContext,  chats)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        chatListAdaptor = ChatListAdaptor(applicationContext, chats)
+        recyclerView.layoutManager = LinearLayoutManager(this) // Assignment of a Layout Manager, in this case, Liner Layout
         recyclerView.adapter = chatListAdaptor
 
         updateUi(FirebaseAuth.getInstance().currentUser)
@@ -113,8 +113,6 @@ class ChatList : AppCompatActivity() {
             }
             true
         })
-
-        // Assignment of a Layout Manager, in this case, Liner Layout
 
         getChats()
 
@@ -229,13 +227,6 @@ class ChatList : AppCompatActivity() {
                 .child("chats")
                 .orderByChild("last message")
                 .addChildEventListener(object : ChildEventListener{
-                    override fun onCancelled(p0: DatabaseError?) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    }
-
-                    override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
-
-                    }
 
                     @SuppressLint("NewApi")
                     @TargetApi(Build.VERSION_CODES.N)
@@ -243,8 +234,9 @@ class ChatList : AppCompatActivity() {
                     override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
                         if (p0 != null) {
                             val chat : Chat = Chat()
-                            chat.bookIsbn = p0.child("books").value.toString()
-                            chat.contactNickname = p0.child("contact").value.toString()
+                            chat.bookIsbn = p0.child("book").value.toString()
+                            chat.contactNickname = p0.child("contactNickname").value.toString()
+                            chat.contactUid = p0.child("contactUid").value.toString()
                             chat.notRead = p0.child("not read").value.toString().toLong()
                             chat.lastMessage = p0.child("last message").value.toString().toLong()
                             chat.chatName = p0.key
@@ -258,24 +250,30 @@ class ChatList : AppCompatActivity() {
 
                     override fun onChildAdded(p0: DataSnapshot?, p1: String?) {
                         if (p0 != null) {
-                                val chat : Chat = Chat()
-                                chat.bookIsbn = p0.child("book").value.toString()
-                                chat.contactNickname = p0.child("contactNickname").value.toString()
-                                chat.contactUid = p0.child("contactUid").value.toString()
-                                chat.notRead = p0.child("not read").value.toString().toLong()
-                                chat.lastMessage = p0.child("last message").value.toString().toLong()
-                                chat.chatName = p0.key
+                            val chat : Chat = Chat()
+                            chat.bookIsbn = p0.child("book").value.toString()
+                            chat.contactNickname = p0.child("contactNickname").value.toString()
+                            chat.contactUid = p0.child("contactUid").value.toString()
+                            chat.notRead = p0.child("not read").value.toString().toLong()
+                            chat.lastMessage = p0.child("last message").value.toString().toLong()
+                            chat.chatName = p0.key
 
-                                chats.add(0, chat)
-                                chatListAdaptor?.notifyDataSetChanged()
+                            chats.add(0, chat)
+                            chatListAdaptor?.notifyDataSetChanged()
 
                         }
+                    }
+                    override fun onCancelled(p0: DatabaseError?) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                     }
 
                     override fun onChildRemoved(p0: DataSnapshot?) {
                         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                     }
-
 
                 })
 

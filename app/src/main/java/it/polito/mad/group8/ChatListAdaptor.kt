@@ -31,7 +31,8 @@ class ChatListAdaptor(private val context: Context, private val chatList: Mutabl
             val intent = Intent(context, ChatRoom::class.java)
             intent.putExtra("chatRoomName", chat.chatName)
             intent.putExtra("contactUid", chat.contactUid)
-            intent.putExtra("contactNickname", chat.contactNickname)
+            //intent.putExtra("contactNickname", chat.contactNickname)
+            intent.putExtra("bookIsbn", chat.bookIsbn)
             context.startActivity(intent)
 
         }
