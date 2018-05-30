@@ -192,6 +192,8 @@ class ChatList : AppCompatActivity() {
             })
 
         } else {
+            finish()
+            startActivity(Intent(this@ChatList, SearchBookActivity::class.java))
             mNavigationView!!.menu.clear()
             mNavigationView!!.inflateMenu(R.menu.menu_drawer_not_loggedin)
         }

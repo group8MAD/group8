@@ -24,8 +24,8 @@ class ChatListAdaptor(private val context: Context, private val chatList: Mutabl
     override fun onBindViewHolder(holder: ChatListAdaptor.ChatHolder, position: Int) {
         val chat = chatList[position]
 
-        holder.title.text = chat.bookIsbn
-        holder.contactNickname.text = "("+chat.contactNickname+")"
+        holder.title.text = "ISBN: "+chat.bookIsbn
+        holder.contactNickname.text = "Owner: "+chat.contactNickname
         holder.lastMessage.text =  formatter.format(chat.lastMessage)
         holder.cardView.setOnClickListener {
             val intent = Intent(context, ChatRoom::class.java)

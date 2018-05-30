@@ -84,7 +84,7 @@ class ChatRoom : AppCompatActivity() {
                 .addChildEventListener(object : ChildEventListener {
                     override fun onChildAdded(p0: DataSnapshot?, p1: String?) {
                         if (p0 != null) {
-                            contactNickname = p0.value.toString()
+                            currentUserNickname = p0.value.toString()
                         }
                     }
 

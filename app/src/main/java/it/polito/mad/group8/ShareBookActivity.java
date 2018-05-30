@@ -300,6 +300,8 @@ public class ShareBookActivity extends AppCompatActivity {
             });
 
         }else{
+            finish();
+            startActivity(new Intent(ShareBookActivity.this, SearchBookActivity.class));
             mNavigationView.getMenu().clear();
             mNavigationView.inflateMenu(R.menu.menu_drawer_not_loggedin);
         }
