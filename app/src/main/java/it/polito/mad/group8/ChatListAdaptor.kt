@@ -10,6 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.text.SimpleDateFormat
 
 class ChatListAdaptor(private val context: Context, private val chatList: MutableList<Chat>) : RecyclerView.Adapter<ChatListAdaptor.ChatHolder>() {
@@ -24,17 +29,15 @@ class ChatListAdaptor(private val context: Context, private val chatList: Mutabl
     override fun onBindViewHolder(holder: ChatListAdaptor.ChatHolder, position: Int) {
         val chat = chatList[position]
 
-        holder.title.text = "ISBN: "+chat.bookIsbn
-        holder.contactNickname.text = "Owner: "+chat.contactNickname
+
+        holder.contactNickname.text = chat.contactNickname
         holder.lastMessage.text =  formatter.format(chat.lastMessage)
         holder.cardView.setOnClickListener {
             val intent = Intent(context, ChatRoom::class.java)
             intent.putExtra("chatRoomName", chat.chatName)
             intent.putExtra("contactUid", chat.contactUid)
-            //intent.putExtra("contactNickname", chat.contactNickname)
-            intent.putExtra("bookIsbn", chat.bookIsbn)
+            intent.putExtra("currentUserUid", FirebaseAuth.getInstance().currentUser?.uid)
             context.startActivity(intent)
-
         }
     }
 

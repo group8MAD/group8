@@ -1,5 +1,6 @@
 package it.polito.mad.group8;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
@@ -37,7 +39,6 @@ public class SingleShowBookActivity extends AppCompatActivity {
     private String isbn;
     private List<String> owners = new ArrayList<String>();
     private ListView chatList;
-
     // Button to open ChatActivity to send a message to the owner of the book
 
     @Override
@@ -85,6 +86,7 @@ public class SingleShowBookActivity extends AppCompatActivity {
 
 
         chatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @SuppressLint("LongLogTag")
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String uid1 = String.valueOf(parent.getItemAtPosition(position));
@@ -92,6 +94,12 @@ public class SingleShowBookActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplication(), ChatRoom.class);
                 intent.putExtra("contactUid", uid1);
                 intent.putExtra("bookIsbn", isbn);
+                intent.putExtra("currentUserUid", uid2);
+
+                Log.e("\t\tSingleShowBookActivity\t\t\t\tCurrent user UID: ", uid2);
+                Log.e("\t\tSingleShowBookActivity\t\t\t\tContact user UID: ", uid1);
+
+                //if(uid2 == uid1) TODO TOAST YOU'VE PUBLISHED THIS BOOK
 
                 FirebaseDatabase.getInstance().getReference("chats/")
                                                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -100,10 +108,12 @@ public class SingleShowBookActivity extends AppCompatActivity {
                                                         if (dataSnapshot.hasChild(uid1+"-"+uid2)){
                                                             String chatRoomName = uid1+"-"+uid2;
                                                             intent.putExtra("chatRoomName", chatRoomName);
+                                                            Log.e("\t\tSingleShowBookActivity\t\t\t\tchatRoomName: ", chatRoomName);
                                                             startActivity(intent);
                                                         }else {
                                                             String chatRoomName = uid2+"-"+uid1;
                                                             intent.putExtra("chatRoomName", chatRoomName);
+                                                            Log.e("\t\tSingleShowBookActivity\t\t\t\tchatRoomName: ", chatRoomName);
                                                             startActivity(intent);
                                                         }
                                                     }
@@ -114,9 +124,9 @@ public class SingleShowBookActivity extends AppCompatActivity {
                                                     }
                                                 });
 
-
             }
         });
+
 
     }
 }

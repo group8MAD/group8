@@ -227,7 +227,7 @@ class ChatList : AppCompatActivity() {
                 .getReference("users")
                 .child(FirebaseAuth.getInstance().currentUser?.uid)
                 .child("chats")
-                .orderByChild("last message")
+                .orderByChild("lastMessage")
                 .addChildEventListener(object : ChildEventListener{
 
                     @SuppressLint("NewApi")
@@ -235,16 +235,11 @@ class ChatList : AppCompatActivity() {
                     @RequiresApi(Build.VERSION_CODES.N)
                     override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
                         if (p0 != null) {
-                            val chat : Chat = Chat()
-                            chat.bookIsbn = p0.child("book").value.toString()
-                            chat.contactNickname = p0.child("contactNickname").value.toString()
-                            chat.contactUid = p0.child("contactUid").value.toString()
-                            chat.notRead = p0.child("not read").value.toString().toLong()
-                            chat.lastMessage = p0.child("last message").value.toString().toLong()
-                            chat.chatName = p0.key
+                            val chat = p0.getValue(Chat::class.java)
+                            chat?.chatName = p0.key
 
                             chats.removeIf({t -> t.chatName == p0.key})
-                            chats.add(0, chat)
+                            chat?.let { chats.add(0, it) }
                             chatListAdaptor?.notifyDataSetChanged()
 
                         }
@@ -252,15 +247,10 @@ class ChatList : AppCompatActivity() {
 
                     override fun onChildAdded(p0: DataSnapshot?, p1: String?) {
                         if (p0 != null) {
-                            val chat : Chat = Chat()
-                            chat.bookIsbn = p0.child("book").value.toString()
-                            chat.contactNickname = p0.child("contactNickname").value.toString()
-                            chat.contactUid = p0.child("contactUid").value.toString()
-                            chat.notRead = p0.child("not read").value.toString().toLong()
-                            chat.lastMessage = p0.child("last message").value.toString().toLong()
-                            chat.chatName = p0.key
+                            val chat = p0.getValue(Chat::class.java)
+                            chat?.chatName = p0.key
 
-                            chats.add(0, chat)
+                            chat?.let { chats.add(it) }
                             chatListAdaptor?.notifyDataSetChanged()
 
                         }
@@ -269,12 +259,28 @@ class ChatList : AppCompatActivity() {
                         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                     }
 
+                    @SuppressLint("NewApi")
+                    @TargetApi(Build.VERSION_CODES.N)
+                    @RequiresApi(Build.VERSION_CODES.N)
                     override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                        if (p0 != null) {
+                            val chat = p0.getValue(Chat::class.java)
+                            chat?.chatName = p0.key
+
+                            chats.removeIf({t -> t.chatName == p0.key})
+                            chat?.let { chats.add(0, it) }
+                            chatListAdaptor?.notifyDataSetChanged()
+
+                        }
                     }
 
+
+                    @SuppressLint("NewApi")
+                    @TargetApi(Build.VERSION_CODES.N)
+                    @RequiresApi(Build.VERSION_CODES.N)
                     override fun onChildRemoved(p0: DataSnapshot?) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                        chats.removeIf({t -> t.chatName == p0?.key})
+                        chatListAdaptor?.notifyDataSetChanged()
                     }
 
                 })

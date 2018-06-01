@@ -15,8 +15,8 @@ class MessageListAdapter(private val mContext: Context, private val mMessageList
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val formatter = SimpleDateFormat("kk:mm MM/dd/yy")
         val message = mMessageList[position]
-        Log.e("\titemviewType", holder.itemViewType.toString())
-        Log.e("\tMessage", message.message)
+        //Log.e("\titemviewType", holder.itemViewType.toString())
+        //Log.e("\tMessage", message.message)
         when (holder.itemViewType) {
 
             VIEW_TYPE_MESSAGE_SENT -> {
