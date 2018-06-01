@@ -12,7 +12,9 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.ui.auth.data.model.Resource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -99,9 +101,11 @@ public class SingleShowBookActivity extends AppCompatActivity {
                 Log.e("\t\tSingleShowBookActivity\t\t\t\tCurrent user UID: ", uid2);
                 Log.e("\t\tSingleShowBookActivity\t\t\t\tContact user UID: ", uid1);
 
-                //if(uid2 == uid1) TODO TOAST YOU'VE PUBLISHED THIS BOOK
+                if(uid2.equals(uid1)) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.cantSend), Toast.LENGTH_LONG).show();
+                }else{
 
-                FirebaseDatabase.getInstance().getReference("chats/")
+                    FirebaseDatabase.getInstance().getReference("chats/")
                                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -124,6 +128,7 @@ public class SingleShowBookActivity extends AppCompatActivity {
                                                     }
                                                 });
 
+                }
             }
         });
 

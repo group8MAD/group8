@@ -33,15 +33,16 @@ public class SingleShowBookAdapter extends ArrayAdapter{
         TextView nicknameTV = customView.findViewById(R.id.nickname);
         ImageView image = customView.findViewById(R.id.image);
 
-        FirebaseDatabase.getInstance().getReference("users/"+ownerUid+"/nickname")
+        FirebaseDatabase.getInstance().getReference("users/"+ownerUid)
                                         .addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                                if (dataSnapshot.exists()){
-                                                    nicknameTV.setText(Objects.requireNonNull(dataSnapshot.getValue()).toString());
+                                                if (dataSnapshot.child("nickname").exists()){
+                                                    nicknameTV.setText(Objects.requireNonNull(dataSnapshot.child("nickname").getValue()).toString());
                                                 }else{
                                                     nicknameTV.setText("Nickname not set");
                                                 }
+
                                             }
 
                                             @Override

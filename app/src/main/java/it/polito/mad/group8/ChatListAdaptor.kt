@@ -2,6 +2,7 @@ package it.polito.mad.group8
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -32,6 +33,16 @@ class ChatListAdaptor(private val context: Context, private val chatList: Mutabl
 
         holder.contactNickname.text = chat.contactNickname
         holder.lastMessage.text =  formatter.format(chat.lastMessage)
+        if (chat.notRead.toString().toInt() == 0){
+            holder.notRead.text = " "
+            holder.notRead.setBackgroundColor(Color.WHITE)
+        }else if (chat.notRead.toString().toInt() < 100){
+            holder.notRead.text = chat.notRead.toString()
+            holder.notRead.setBackgroundResource(R.drawable.yellow_circle)
+        }else{
+            holder.notRead.text = "99+"
+            holder.notRead.setBackgroundResource(R.drawable.yellow_circle)
+        }
         holder.cardView.setOnClickListener {
             val intent = Intent(context, ChatRoom::class.java)
             intent.putExtra("chatRoomName", chat.chatName)
@@ -47,7 +58,7 @@ class ChatListAdaptor(private val context: Context, private val chatList: Mutabl
 
     inner class ChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var title: TextView
+        var notRead: TextView
         var contactNickname: TextView
         var lastMessage: TextView
         var thumbnail: ImageView
@@ -55,7 +66,7 @@ class ChatListAdaptor(private val context: Context, private val chatList: Mutabl
 
 
         init {
-            title = itemView.findViewById(R.id.chatTitle)
+            notRead = itemView.findViewById(R.id.notRead)
             contactNickname = itemView.findViewById(R.id.textView2)
             lastMessage = itemView.findViewById(R.id.lastMessage)
             thumbnail = itemView.findViewById(R.id.thumbnail)
