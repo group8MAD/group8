@@ -7,6 +7,8 @@ class Chat() {
     var contactUid: String? = null
     var notRead:Long? = null
     var lastMessage:Long? = null
+    var lastMessageText:String? = null
+    var contactImageUri:String? = null
 
     init {
         this.chatName = ""
@@ -14,6 +16,8 @@ class Chat() {
         this.contactUid = ""
         this.notRead = 0
         this.lastMessage = 0
+        this.lastMessageText = ""
+        this.contactImageUri = ""
     }
 
 }

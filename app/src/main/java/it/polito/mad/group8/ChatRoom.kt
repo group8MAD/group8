@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -31,11 +32,10 @@ class ChatRoom : AppCompatActivity() {
     private var chatName:String? = null
     //Contact User Info
     private var contactUserUid:String? = null
-    private var contactUserNickname:String? = null
     //Current logged-in User Info
     private var currentUserUid:String? = null
-    private var currentUserNickname:String? = null
 
+    private var chatStatus:String? = null
 
 
     @SuppressLint("LongLogTag")
@@ -45,7 +45,18 @@ class ChatRoom : AppCompatActivity() {
         chatName = intent.getStringExtra("chatRoomName");
         contactUserUid = intent.getStringExtra("contactUid");
         currentUserUid = intent.getStringExtra("currentUserUid")
+        chatStatus = intent.getStringExtra("chat")
 
+        val contactUserChatInfo = Chat()
+        val currentUserChatInfo = Chat()
+
+        contactUserChatInfo.chatName = chatName
+        contactUserChatInfo.contactUid = currentUserUid
+
+        currentUserChatInfo.chatName = chatName
+        currentUserChatInfo.contactUid = contactUserUid
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         Log.e("\t\tChatRoom\t\t\t\tChatRoomName: ", chatName)
         Log.e("\t\tChatRoom\t\t\t\tContact user UID: ", contactUserUid)
@@ -53,45 +64,50 @@ class ChatRoom : AppCompatActivity() {
 
         chatRef = FirebaseDatabase.getInstance().getReference("chats").child(chatName)
 
-        val editTextMessage: EditText = this.findViewById(R.id.edittext_chatbox)
+        val editTextMessage: EditText = this.findViewById<EditText>(R.id.edittext_chatbox)
         val mButton: Button = findViewById(R.id.button_chatbox_send)
 
+
+
         //resetting notRead
-        FirebaseDatabase.getInstance().getReference("users")
-                .child(currentUserUid)
-                .child("chats")
-                .child(chatName)
-                .child("notRead")
-                .setValue(0)
+        if (chatStatus == "old") {
+            FirebaseDatabase.getInstance().getReference("users")
+                    .child(currentUserUid)
+                    .child("chats")
+                    .child(chatName)
+                    .child("notRead")
+                    .setValue(0)
+        }
 
         //Getting current User Nickname
         FirebaseDatabase.getInstance().getReference("users")
                 .child(currentUserUid)
-                .child("nickname")
                 .addListenerForSingleValueEvent(object : ValueEventListener{
                     override fun onCancelled(p0: DatabaseError?) {
                         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                     }
 
                     override fun onDataChange(p0: DataSnapshot?) {
-                        Log.e("\t\tChatRoom\t\t\t\tCurrent user Nickname: ", p0?.value.toString())
-                        currentUserNickname = p0?.value.toString()
+                        Log.e("\t\tChatRoom\t\t\t\tCurrent user Nickname: ", p0?.child("nickname")?.value.toString())
+                        contactUserChatInfo.contactNickname = p0?.child("nickname")?.value.toString()
+                        contactUserChatInfo.contactImageUri = p0?.child("imageUri")?.value.toString()
                     }
 
                 })
 
-        //Getting contact User Nickname
+        //Getting contact User Nickname and imageUri
         FirebaseDatabase.getInstance().getReference("users")
                 .child(contactUserUid)
-                .child("nickname")
                 .addListenerForSingleValueEvent(object : ValueEventListener{
                     override fun onCancelled(p0: DatabaseError?) {
                         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                     }
 
                     override fun onDataChange(p0: DataSnapshot?) {
-                        Log.e("\t\tChatRoom\t\t\t\tContact user Nickname: ", p0?.value.toString())
-                        contactUserNickname = p0?.value.toString()
+                        Log.e("\t\tChatRoom\t\t\t\tContact user Nickname: ", p0?.child("nickname")?.value.toString())
+                        currentUserChatInfo.contactNickname = p0?.child("nickname")?.value.toString()
+                        currentUserChatInfo.contactImageUri = p0?.child("imageUri")?.value.toString()
+                        supportActionBar?.title = currentUserChatInfo.contactNickname
                     }
 
                 })
@@ -138,46 +154,26 @@ class ChatRoom : AppCompatActivity() {
                 message.createdAt = Calendar.getInstance().time.time
 
                 editTextMessage.setText("")
+                Log.e("chatStatus", chatStatus)
+
                 // Fill-in the logged-in user data of the chat
+                currentUserChatInfo.notRead = 0
+                currentUserChatInfo.lastMessage = message.createdAt
+                currentUserChatInfo.lastMessageText = message.message
+
+
                 FirebaseDatabase.getInstance().getReference("users")
                         .child(currentUserUid)
                         .child("chats")
                         .child(chatName)
-                        .child("notRead")
-                        .setValue(0)
-                FirebaseDatabase.getInstance().getReference("users")
-                        .child(currentUserUid)
-                        .child("chats")
-                        .child(chatName)
-                        .child("lastMessage")
-                        .setValue(message.createdAt)
-                FirebaseDatabase.getInstance().getReference("users")
-                        .child(currentUserUid)
-                        .child("chats")
-                        .child(chatName)
-                        .child("contactNickname")
-                        .setValue(contactUserNickname)
-                FirebaseDatabase.getInstance().getReference("users")
-                        .child(currentUserUid)
-                        .child("chats")
-                        .child(chatName)
-                        .child("contactUid")
-                        .setValue(contactUserUid)
+                        .setValue(currentUserChatInfo)
 
 
                 // Fill-in the contact user data of the chat
-                FirebaseDatabase.getInstance().getReference("users")
-                        .child(contactUserUid)
-                        .child("chats")
-                        .child(chatName)
-                        .child("contactNickname")
-                        .setValue(currentUserNickname)
-                FirebaseDatabase.getInstance().getReference("users")
-                        .child(contactUserUid)
-                        .child("chats")
-                        .child(chatName)
-                        .child("contactUid")
-                        .setValue(currentUserUid)
+                contactUserChatInfo.lastMessage = message.createdAt
+                contactUserChatInfo.lastMessageText = message.message
+
+
                 FirebaseDatabase.getInstance().getReference("users")
                         .child(contactUserUid)
                         .child("chats")
@@ -189,19 +185,17 @@ class ChatRoom : AppCompatActivity() {
                             }
 
                             override fun onDataChange(p0: DataSnapshot?) {
-                                val currentlyNotReaded = p0?.value.toString().toLong()
-                                p0?.ref?.setValue(currentlyNotReaded + 1)
+                                if (p0?.exists()!!) {
+                                    val currentlyNotRead = p0.value.toString().toLong()
+                                    contactUserChatInfo.notRead = currentlyNotRead +1
+                                    p0.ref.parent.setValue(contactUserChatInfo)
+                                }else{
+                                    contactUserChatInfo.notRead = 1
+                                    p0.ref.parent.setValue(contactUserChatInfo)
+                                }
                             }
 
                         })
-                FirebaseDatabase.getInstance().getReference("users")
-                        .child(contactUserUid)
-                        .child("chats")
-                        .child(chatName)
-                        .child("lastMessage")
-                        .setValue(message.createdAt)
-
-
                 chatRef?.child("messages")?.child(message.createdAt.toString())?.setValue(message)
             }
         })
@@ -219,14 +213,22 @@ class ChatRoom : AppCompatActivity() {
     }
 
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        this.finish()
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onDestroy() {
         //resetting notRead
-        FirebaseDatabase.getInstance().getReference("users")
-                .child(currentUserUid)
-                .child("chats")
-                .child(chatName)
-                .child("notRead")
-                .setValue(0)
+        if (chatStatus == "old") {
+            FirebaseDatabase.getInstance().getReference("users")
+                    .child(currentUserUid)
+                    .child("chats")
+                    .child(chatName)
+                    .child("notRead")
+                    .setValue(0)
+        }
         super.onDestroy()
     }
 }

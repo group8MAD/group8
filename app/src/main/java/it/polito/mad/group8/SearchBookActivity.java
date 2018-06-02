@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -82,6 +83,8 @@ public class SearchBookActivity extends AppCompatActivity {
 
         updateUi(FirebaseAuth.getInstance().getCurrentUser());
 
+
+
         // Creation of the lateral menu
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -89,7 +92,7 @@ public class SearchBookActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.nav_profile:
-                        finish();
+                        mDrawerLayout.closeDrawers();
                         startActivity(new Intent(SearchBookActivity.this, ShowProfile.class));
                         return true;
 
@@ -99,12 +102,12 @@ public class SearchBookActivity extends AppCompatActivity {
                         return true;*/
 
                     case R.id.nav_share_books_logged:
-                        finish();
+                        mDrawerLayout.closeDrawers();
                         startActivity(new Intent(SearchBookActivity.this, ShareBookActivity.class));
                         return true;
 
                     case R.id.chats:
-                        finish();
+                        mDrawerLayout.closeDrawers();
                         startActivity(new Intent(getApplicationContext(), ChatList.class));
                         return true;
 
@@ -136,12 +139,36 @@ public class SearchBookActivity extends AppCompatActivity {
 
     }
     //This is useful for when you're not logged in and you log in
-    //if you don't updateUi onStart lateral menu won't change
+    //if you don't updateUi onResume lateral menu won't change
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         updateUi(FirebaseAuth.getInstance().getCurrentUser());
-        /* TODO Check the flow of activities and if updateUi here is neccesary */
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("chats")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int counter = 0;
+                        for (DataSnapshot chat: dataSnapshot.getChildren()){
+                            counter += Integer.parseInt(chat.child("notRead").getValue().toString());
+                        }
+                        setMenuCounter(counter);
+                        
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void setMenuCounter(int count) {
+        TextView view = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
+        mNavigationView.getMenu().findItem(R.id.chats).setTitle("asd");
+        view.setText(String.valueOf(count));
     }
 
     public void signOut(){

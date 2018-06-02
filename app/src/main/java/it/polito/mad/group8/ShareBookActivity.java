@@ -65,7 +65,7 @@ public class ShareBookActivity extends AppCompatActivity {
     Book book;
     String isbn;
 
-    Button button;
+    Button searchIsbn;
     ProgressDialog pd;
 
     TextView title;
@@ -97,7 +97,7 @@ public class ShareBookActivity extends AppCompatActivity {
         publisher = findViewById(R.id.publisher);
         year = findViewById(R.id.year);
         image = findViewById(R.id.image);
-        button = findViewById(R.id.button);
+        searchIsbn = findViewById(R.id.button);
         isbnEditTextView = findViewById(R.id.isbn);
         scan = findViewById(R.id.scan);
         publish = findViewById(R.id.publish);
@@ -109,7 +109,7 @@ public class ShareBookActivity extends AppCompatActivity {
             }
         });
 
-        button.setOnClickListener(new View.OnClickListener() {
+        searchIsbn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isbn = isbnEditTextView.getText().toString();
@@ -136,7 +136,7 @@ public class ShareBookActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if(FirebaseAuth.getInstance().getCurrentUser()!=null){
-                                    publishBook(options[choice]);
+                                    publishBook(String.valueOf(choice));
                                 }else{
                                     Toast.makeText(ShareBookActivity.this,R.string.notSignedIn,Toast.LENGTH_LONG).show();
                                 }
@@ -166,6 +166,7 @@ public class ShareBookActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.nav_profile:
+                        mDrawerLayout.closeDrawers();
                         startProfileActivity();
                         return true;
 
@@ -179,12 +180,12 @@ public class ShareBookActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.chats:
-                        finish();
+                        mDrawerLayout.closeDrawers();
                         startActivity(new Intent(getApplicationContext(), ChatList.class));
                         return true;
 
                     case R.id.nav_search_books:
-                        finish();
+                        mDrawerLayout.closeDrawers();
                         startActivity(new Intent(ShareBookActivity.this, SearchBookActivity.class));
                         return true;
 
@@ -205,10 +206,34 @@ public class ShareBookActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         updateUi(FirebaseAuth.getInstance().getCurrentUser());
-        /* TODO Check the flow of activities and if updateUi here is neccesary */
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("chats")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int counter = 0;
+                        for (DataSnapshot chat: dataSnapshot.getChildren()){
+                            counter += Integer.parseInt(chat.child("notRead").getValue().toString());
+                        }
+                        setMenuCounter(counter);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void setMenuCounter(int count) {
+        TextView view = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
+        mNavigationView.getMenu().findItem(R.id.chats).setTitle("asd");
+        view.setText(String.valueOf(count));
     }
 
     @Override
@@ -451,6 +476,8 @@ public class ShareBookActivity extends AppCompatActivity {
                         //path /users/{userID}/books/{bookISBN}/condition
                         dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
                                 .child(isbn).child("condition").setValue(condition);
+                        Toast.makeText(getApplicationContext(),R.string.bookUploadOk,Toast.LENGTH_LONG).show();
+                        deleteBook();
                     } else {
                         //adding book
                         //path /books/{bookISBN}
@@ -462,6 +489,8 @@ public class ShareBookActivity extends AppCompatActivity {
                         //path /users/{userID}/books/{bookISBN}/condition
                         dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
                                                         .child(isbn).child("condition").setValue(condition);
+                        Toast.makeText(getApplicationContext(),R.string.bookUploadOk,Toast.LENGTH_LONG).show();
+                        deleteBook();
                     }
                 }else{
                     Toast.makeText(ShareBookActivity.this,R.string.bookNotValid,Toast.LENGTH_LONG).show();
@@ -473,7 +502,19 @@ public class ShareBookActivity extends AppCompatActivity {
             }
         });
     }
-
+    private void deleteBook(){
+        book.setIsbn("");
+        book.setAuthors("");
+        book.setEditionYear("");
+        book.setPublisher("");
+        book.setThumbnail("");
+        book.setTitle("");
+        title.setText(book.getTitle());
+        authors.setText(book.getAuthors());
+        year.setText(book.getEditionYear());
+        publisher.setText(book.getPublisher());
+        image.setImageDrawable(null);
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

@@ -11,7 +11,7 @@
     <TextView
         android:id="@+id/text_message_body"
         android:text="hi man, how are you?"
-        android:background="@drawable/rounded_rectangle_white"
+        android:background="@drawable/rounded_rectangle_received"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxWidth="240dp"

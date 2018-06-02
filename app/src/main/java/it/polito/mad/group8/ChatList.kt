@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 
 import com.firebase.ui.auth.AuthUI
@@ -83,18 +84,18 @@ class ChatList : AppCompatActivity() {
                         return true;*/
 
                 R.id.nav_share_books_logged -> {
-                    finish()
+                    mDrawerLayout?.closeDrawers()
                     startActivity(Intent(this@ChatList, ShareBookActivity::class.java))
                     return@OnNavigationItemSelectedListener true
                 }
 
                 R.id.chats -> {
-                    mDrawerLayout!!.closeDrawers()
+                    mDrawerLayout?.closeDrawers()
                     return@OnNavigationItemSelectedListener true
                 }
 
                 R.id.nav_search_books -> {
-                    finish()
+                    mDrawerLayout?.closeDrawers()
                     startActivity(Intent(this@ChatList, SearchBookActivity::class.java))
                     return@OnNavigationItemSelectedListener true
                 }
@@ -109,7 +110,7 @@ class ChatList : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
 
-                else -> mDrawerLayout!!.closeDrawers()
+                else -> mDrawerLayout?.closeDrawers()
             }
             true
         })
@@ -119,11 +120,33 @@ class ChatList : AppCompatActivity() {
     }
 
     //This is useful for when you're not logged in and you log in
-    //if you don't updateUi onStart lateral menu won't change
-    override fun onStart() {
-        super.onStart()
+    //if you don't updateUi onResume lateral menu won't change
+    override fun onResume() {
+        super.onResume()
         updateUi(FirebaseAuth.getInstance().currentUser)
-        /* TODO Check the flow of activities and if updateUi here is neccesary */
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                .child("chats")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        var counter = 0
+                        for (chat in dataSnapshot.children) {
+                            counter += Integer.parseInt(chat.child("notRead").value!!.toString())
+                        }
+                        setMenuCounter(counter)
+
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+
+                    }
+                })
+    }
+
+    private fun setMenuCounter(count: Int) {
+        val view = mNavigationView?.getMenu()?.findItem(R.id.chats)?.actionView as TextView
+        mNavigationView?.getMenu()?.findItem(R.id.chats)?.title = "asd"
+        view.text = count.toString()
     }
 
     fun signOut() {
@@ -237,7 +260,6 @@ class ChatList : AppCompatActivity() {
                         if (p0 != null) {
                             val chat = p0.getValue(Chat::class.java)
                             chat?.chatName = p0.key
-
                             chats.removeIf({t -> t.chatName == p0.key})
                             chat?.let { chats.add(0, it) }
                             chatListAdaptor?.notifyDataSetChanged()
@@ -250,8 +272,9 @@ class ChatList : AppCompatActivity() {
                             val chat = p0.getValue(Chat::class.java)
                             chat?.chatName = p0.key
 
-                            chat?.let { chats.add(it) }
+                            chat?.let { chats.add(0, it) }
                             chatListAdaptor?.notifyDataSetChanged()
+
 
                         }
                     }
@@ -263,15 +286,7 @@ class ChatList : AppCompatActivity() {
                     @TargetApi(Build.VERSION_CODES.N)
                     @RequiresApi(Build.VERSION_CODES.N)
                     override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
-                        if (p0 != null) {
-                            val chat = p0.getValue(Chat::class.java)
-                            chat?.chatName = p0.key
 
-                            chats.removeIf({t -> t.chatName == p0.key})
-                            chat?.let { chats.add(0, it) }
-                            chatListAdaptor?.notifyDataSetChanged()
-
-                        }
                     }
 
 

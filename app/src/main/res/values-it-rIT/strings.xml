@@ -33,4 +33,5 @@
     <string name="notSignedIn">Se vuoi condividere un libro devi prima accedere!</string>
     <string name="noThumbnail">Nessuna anteprima del libro trovata!</string>
     <string name="noData">Alcune informazioni sul libro non sono state trovate!</string>
+    <string name="conditions">Condizioni: </string>
 </resources>

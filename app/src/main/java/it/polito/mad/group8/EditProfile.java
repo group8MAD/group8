@@ -121,6 +121,7 @@ public class EditProfile extends AppCompatActivity {
                 CropImage.activity()
                         .setAspectRatio(1, 1)
                         .setMinCropResultSize(512, 512)
+                        .setRequestedSize(512,512)
                         .start(EditProfile.this);
             }
         }
@@ -136,6 +137,7 @@ public class EditProfile extends AppCompatActivity {
                 CropImage.activity()
                         .setAspectRatio(1,1)
                         .setMinCropResultSize(512,512)
+                        .setRequestedSize(512,512)
                         .start(EditProfile.this);
             } else {
                 Toast.makeText(this, getApplicationContext().getString(R.string.deniedPermission), Toast.LENGTH_LONG).show();

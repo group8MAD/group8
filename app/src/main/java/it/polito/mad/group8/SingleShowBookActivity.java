@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -43,6 +45,8 @@ public class SingleShowBookActivity extends AppCompatActivity {
     private ListView chatList;
     // Button to open ChatActivity to send a message to the owner of the book
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +65,7 @@ public class SingleShowBookActivity extends AppCompatActivity {
         publisher.setText(getIntent().getStringExtra("publisher"));
         year.setText(getIntent().getStringExtra("year"));
 
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String imageUrl = getIntent().getStringExtra("url");
         Log.e("imageuri: ", imageUrl);
@@ -74,7 +78,7 @@ public class SingleShowBookActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot owner: dataSnapshot.getChildren()){
-                           owners.add(owner.getKey());
+                           owners.add(owner.getKey()+"-"+isbn);
                         }
                         chatList.setAdapter(new SingleShowBookAdapter(getApplicationContext(), owners.toArray(new String[0])));
                     }
@@ -97,6 +101,7 @@ public class SingleShowBookActivity extends AppCompatActivity {
                 intent.putExtra("contactUid", uid1);
                 intent.putExtra("bookIsbn", isbn);
                 intent.putExtra("currentUserUid", uid2);
+                intent.putExtra("chat", "new");
 
                 Log.e("\t\tSingleShowBookActivity\t\t\t\tCurrent user UID: ", uid2);
                 Log.e("\t\tSingleShowBookActivity\t\t\t\tContact user UID: ", uid1);
@@ -133,5 +138,11 @@ public class SingleShowBookActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        finish();
+        return super.onOptionsItemSelected(item);
     }
 }

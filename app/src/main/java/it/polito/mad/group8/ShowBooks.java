@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -132,7 +133,35 @@ public class ShowBooks extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("chats")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int counter = 0;
+                        for (DataSnapshot chat: dataSnapshot.getChildren()){
+                            counter += Integer.parseInt(chat.child("notRead").getValue().toString());
+                        }
+                        setMenuCounter(counter);
 
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void setMenuCounter(int count) {
+        TextView view = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
+        mNavigationView.getMenu().findItem(R.id.chats).setTitle("asd");
+        view.setText(String.valueOf(count));
+    }
     private void showData(DataSnapshot dataSnapshot) {
         for (DataSnapshot ds : dataSnapshot.getChildren()){
             User uInfo = new User();

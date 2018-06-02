@@ -53,5 +53,6 @@
     <string name="message_button_description">Send a message to the owner of the book</string>
     <string name="chats">Chats</string>
     <string name="cantSend">You\'re sharing this book!!</string>
-
+    <string name="bookUploadOk">Book successfully shared!!</string>
+    <string name="conditions">Conditions: </string>
 </resources>

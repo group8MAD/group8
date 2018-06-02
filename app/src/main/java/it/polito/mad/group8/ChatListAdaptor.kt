@@ -16,6 +16,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 
 class ChatListAdaptor(private val context: Context, private val chatList: MutableList<Chat>) : RecyclerView.Adapter<ChatListAdaptor.ChatHolder>() {
@@ -33,6 +34,11 @@ class ChatListAdaptor(private val context: Context, private val chatList: Mutabl
 
         holder.contactNickname.text = chat.contactNickname
         holder.lastMessage.text =  formatter.format(chat.lastMessage)
+        holder.lastMessageText.text = chat.lastMessageText
+
+        if (!chat.contactImageUri.isNullOrEmpty())
+            Picasso.get().load(chat.contactImageUri).into(holder.thumbnail)
+
         if (chat.notRead.toString().toInt() == 0){
             holder.notRead.text = " "
             holder.notRead.setBackgroundColor(Color.WHITE)
@@ -48,6 +54,8 @@ class ChatListAdaptor(private val context: Context, private val chatList: Mutabl
             intent.putExtra("chatRoomName", chat.chatName)
             intent.putExtra("contactUid", chat.contactUid)
             intent.putExtra("currentUserUid", FirebaseAuth.getInstance().currentUser?.uid)
+            intent.putExtra("contactImageUri", chat.contactImageUri)
+            intent.putExtra("chat", "old")
             context.startActivity(intent)
         }
     }
@@ -60,6 +68,7 @@ class ChatListAdaptor(private val context: Context, private val chatList: Mutabl
 
         var notRead: TextView
         var contactNickname: TextView
+        var lastMessageText: TextView
         var lastMessage: TextView
         var thumbnail: ImageView
         var cardView: CardView
@@ -68,6 +77,7 @@ class ChatListAdaptor(private val context: Context, private val chatList: Mutabl
         init {
             notRead = itemView.findViewById(R.id.notRead)
             contactNickname = itemView.findViewById(R.id.textView2)
+            lastMessageText = itemView.findViewById(R.id.lastMessageText)
             lastMessage = itemView.findViewById(R.id.lastMessage)
             thumbnail = itemView.findViewById(R.id.thumbnail)
             cardView = itemView.findViewById(R.id.cardViewID)
