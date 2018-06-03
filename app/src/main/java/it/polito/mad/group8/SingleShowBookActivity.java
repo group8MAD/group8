@@ -95,9 +95,13 @@ public class SingleShowBookActivity extends AppCompatActivity {
             @SuppressLint("LongLogTag")
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String uid1 = String.valueOf(parent.getItemAtPosition(position));
+                String ownerUidAndIsbn = String.valueOf(parent.getItemAtPosition(position));
                 String uid2 = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                 Intent intent = new Intent(getApplication(), ChatRoom.class);
+
+                String[] split = ownerUidAndIsbn.split("-");
+                String uid1 = split[0];
+
                 intent.putExtra("contactUid", uid1);
                 intent.putExtra("bookIsbn", isbn);
                 intent.putExtra("currentUserUid", uid2);

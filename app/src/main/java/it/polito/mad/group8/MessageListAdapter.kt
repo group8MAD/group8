@@ -21,11 +21,11 @@ class MessageListAdapter(private val mContext: Context, private val mMessageList
 
             VIEW_TYPE_MESSAGE_SENT -> {
                 (holder as SentMessageHolder).messageText.text = message.message
-                (holder as SentMessageHolder).timeText.text = formatter.format(message.createdAt)
+                holder.timeText.text = formatter.format(message.createdAt)
             }
             VIEW_TYPE_MESSAGE_RECEIVED -> {
                 (holder as ReceivedMessageHolder).messageText.text = message.message
-                (holder as ReceivedMessageHolder).timeText.text = formatter.format(message.createdAt)
+                holder.timeText.text = formatter.format(message.createdAt)
             }
         }
     }
