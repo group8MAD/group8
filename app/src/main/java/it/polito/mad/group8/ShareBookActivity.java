@@ -476,6 +476,10 @@ public class ShareBookActivity extends AppCompatActivity {
                         //path /users/{userID}/books/{bookISBN}/condition
                         dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
                                 .child(isbn).child("condition").setValue(condition);
+                        dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
+                                .child(isbn).child("status").setValue("available");
+                        dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
+                                .child(isbn).child("title").setValue(book.getTitle());
                         Toast.makeText(getApplicationContext(),R.string.bookUploadOk,Toast.LENGTH_LONG).show();
                         deleteBook();
                     } else {
@@ -489,6 +493,10 @@ public class ShareBookActivity extends AppCompatActivity {
                         //path /users/{userID}/books/{bookISBN}/condition
                         dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
                                                         .child(isbn).child("condition").setValue(condition);
+                        dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
+                                .child(isbn).child("status").setValue("available");
+                        dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
+                                .child(isbn).child("title").setValue(book.getTitle());
                         Toast.makeText(getApplicationContext(),R.string.bookUploadOk,Toast.LENGTH_LONG).show();
                         deleteBook();
                     }

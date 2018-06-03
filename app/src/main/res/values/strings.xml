@@ -55,4 +55,16 @@
     <string name="cantSend">You\'re sharing this book!!</string>
     <string name="bookUploadOk">Book successfully shared!!</string>
     <string name="conditions">Conditions: </string>
+    <string name="contact">Contact user</string>ù
+    <string name="getReview">Read reviews</string>
+    <string name="writeReview">Write a review</string>
+    <string name="borrow">Borrow a book</string>
+    <string name="userProfile">User Profile</string>
+    <string name="userBorrow">You\'re borrowing a book from: </string>
+    <string name="startingDate">Starting Date</string>
+    <string name="endingDate">Ending Date</string>
+    <string name="selectBook">Select a book</string>
+    <string name="selectBookClick">Tap here to select a book</string>
+    <string name="tapToSelect">Tap here to select</string>
+    <string name="selectedBook">Wanted Book</string>
 </resources>

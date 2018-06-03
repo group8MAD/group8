@@ -97,47 +97,18 @@ public class SingleShowBookActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String ownerUidAndIsbn = String.valueOf(parent.getItemAtPosition(position));
                 String uid2 = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-                Intent intent = new Intent(getApplication(), ChatRoom.class);
+                Intent intent = new Intent(getApplication(), PublicShowProfile.class);
 
                 String[] split = ownerUidAndIsbn.split("-");
                 String uid1 = split[0];
 
                 intent.putExtra("contactUid", uid1);
-                intent.putExtra("bookIsbn", isbn);
                 intent.putExtra("currentUserUid", uid2);
-                intent.putExtra("chat", "new");
 
                 Log.e("\t\tSingleShowBookActivity\t\t\t\tCurrent user UID: ", uid2);
                 Log.e("\t\tSingleShowBookActivity\t\t\t\tContact user UID: ", uid1);
 
-                if(uid2.equals(uid1)) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.cantSend), Toast.LENGTH_LONG).show();
-                }else{
-
-                    FirebaseDatabase.getInstance().getReference("chats/")
-                                                .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        if (dataSnapshot.hasChild(uid1+"-"+uid2)){
-                                                            String chatRoomName = uid1+"-"+uid2;
-                                                            intent.putExtra("chatRoomName", chatRoomName);
-                                                            Log.e("\t\tSingleShowBookActivity\t\t\t\tchatRoomName: ", chatRoomName);
-                                                            startActivity(intent);
-                                                        }else {
-                                                            String chatRoomName = uid2+"-"+uid1;
-                                                            intent.putExtra("chatRoomName", chatRoomName);
-                                                            Log.e("\t\tSingleShowBookActivity\t\t\t\tchatRoomName: ", chatRoomName);
-                                                            startActivity(intent);
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
-
-                                                    }
-                                                });
-
-                }
+                startActivity(intent);
             }
         });
 

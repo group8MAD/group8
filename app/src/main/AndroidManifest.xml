@@ -40,7 +40,9 @@
         <activity android:name=".ShareBookActivity" />
         <activity android:name=".SingleShowBookActivity" />
         <activity android:name=".ChatList" />
-        <activity android:name=".ChatRoom"/>
+        <activity android:name=".ChatRoom" />
+        <activity android:name=".PublicShowProfile" />
+        <activity android:name=".BorrowBook"></activity>
     </application>
 
 </manifest>

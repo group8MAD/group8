@@ -1,11 +1,13 @@
 package it.polito.mad.group8
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -15,6 +17,9 @@ import com.google.firebase.database.*
 import java.util.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ChildEventListener
+import android.view.MenuInflater
+
+
 
 
 
@@ -213,9 +218,20 @@ class ChatRoom : AppCompatActivity() {
     }
 
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
-        this.finish()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.chat_room_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == R.id.borrowBook){
+            val borrowIntent = Intent(applicationContext, BorrowBook::class.java)
+            borrowIntent.putExtra("contactUid", contactUserUid);
+            startActivity(borrowIntent)
+        }else
+            this.finish()
         return super.onOptionsItemSelected(item)
     }
 

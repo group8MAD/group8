@@ -34,4 +34,16 @@
     <string name="noThumbnail">Nessuna anteprima del libro trovata!</string>
     <string name="noData">Alcune informazioni sul libro non sono state trovate!</string>
     <string name="conditions">Condizioni: </string>
+    <string name="contact">Contatta utente</string>
+    <string name="getReview">Leggi recensioni</string>
+    <string name="writeReview">Scrivi una recensione</string>
+    <string name="borrow">Ottieni un libro</string>
+    <string name="userProfile">Profilo Utente</string>
+    <string name="userBorrow">Stay prendendo un libro in prestito da: </string>
+    <string name="startingDate">Data Iniziale</string>
+    <string name="endingDate">Data Finale</string>
+    <string name="selectBook">Seleziona un libro</string>
+    <string name="selectBookClick">Schiaccia qui per selezionare il libro</string>
+    <string name="tapToSelect">Schiaccia qui per selezionare</string>
+    <string name="selectedBook">Libro desiderato</string>
 </resources>
