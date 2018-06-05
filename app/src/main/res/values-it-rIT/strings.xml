@@ -46,4 +46,8 @@
     <string name="selectBookClick">Schiaccia qui per selezionare il libro</string>
     <string name="tapToSelect">Schiaccia qui per selezionare</string>
     <string name="selectedBook">Libro desiderato</string>
+    <string name="sendRequest">Manda Richiesta</string>
+    <string name="requests">Richieste</string>
+    <string name="accept">Accetta Richiesta</string>
+    <string name="deny">Rifiuta Richiesta</string>
 </resources>

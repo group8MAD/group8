@@ -115,6 +115,11 @@ public class SearchBookActivity extends AppCompatActivity {
                         mDrawerLayout.closeDrawers();
                         return true;
 
+                    case R.id.requests:
+                        mDrawerLayout.closeDrawers();
+                        startActivity(new Intent(getApplicationContext(), RequestActivity.class));
+                        return true;
+
                     case R.id.logout:
                         signOut();
                         return true;
@@ -167,7 +172,6 @@ public class SearchBookActivity extends AppCompatActivity {
 
     private void setMenuCounter(int count) {
         TextView view = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
-        mNavigationView.getMenu().findItem(R.id.chats).setTitle("asd");
         view.setText(String.valueOf(count));
     }
 

@@ -67,4 +67,8 @@
     <string name="selectBookClick">Tap here to select a book</string>
     <string name="tapToSelect">Tap here to select</string>
     <string name="selectedBook">Wanted Book</string>
+    <string name="sendRequest">Send Request</string>
+    <string name="requests">Requests</string>
+    <string name="accept">Accept Request</string>
+    <string name="deny">Deny Request</string>
 </resources>

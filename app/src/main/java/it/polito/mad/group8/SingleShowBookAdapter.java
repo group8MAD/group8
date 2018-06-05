@@ -43,7 +43,7 @@ public class SingleShowBookAdapter extends ArrayAdapter{
         String bookIsbn = array[1];
 
         TextView nicknameTV = customView.findViewById(R.id.nickname);
-        TextView bookLocation = customView.findViewById(R.id.bookLocation);
+        TextView bookLocation = customView.findViewById(R.id.description);
         ImageView image = customView.findViewById(R.id.image);
 
         FirebaseDatabase.getInstance().getReference("users/"+ownerUid)

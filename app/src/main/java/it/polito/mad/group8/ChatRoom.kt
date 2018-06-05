@@ -35,37 +35,32 @@ class ChatRoom : AppCompatActivity() {
     private var mMessageAdapter: MessageListAdapter? = null
     private var chatRef: DatabaseReference? = null
     private var chatName:String? = null
-    //Contact User Info
-    private var contactUserUid:String? = null
-    //Current logged-in User Info
-    private var currentUserUid:String? = null
+
 
     private var chatStatus:String? = null
 
+    val contactUserChatInfo = Chat()
+    val currentUserChatInfo = Chat()
 
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_room)
         chatName = intent.getStringExtra("chatRoomName");
-        contactUserUid = intent.getStringExtra("contactUid");
-        currentUserUid = intent.getStringExtra("currentUserUid")
+
+        //getting info
+        currentUserChatInfo.contactUid = intent.getStringExtra("contactUid");
+        contactUserChatInfo.contactUid = intent.getStringExtra("currentUserUid")
         chatStatus = intent.getStringExtra("chat")
-
-        val contactUserChatInfo = Chat()
-        val currentUserChatInfo = Chat()
-
         contactUserChatInfo.chatName = chatName
-        contactUserChatInfo.contactUid = currentUserUid
-
         currentUserChatInfo.chatName = chatName
-        currentUserChatInfo.contactUid = contactUserUid
+
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         Log.e("\t\tChatRoom\t\t\t\tChatRoomName: ", chatName)
-        Log.e("\t\tChatRoom\t\t\t\tContact user UID: ", contactUserUid)
-        Log.e("\t\tChatRoom\t\t\t\tCurrent user UID: ", currentUserUid)
+        Log.e("\t\tChatRoom\t\t\t\tContact user UID: ", currentUserChatInfo.contactUid)
+        Log.e("\t\tChatRoom\t\t\t\tCurrent user UID: ", contactUserChatInfo.contactUid)
 
         chatRef = FirebaseDatabase.getInstance().getReference("chats").child(chatName)
 
@@ -77,7 +72,7 @@ class ChatRoom : AppCompatActivity() {
         //resetting notRead
         if (chatStatus == "old") {
             FirebaseDatabase.getInstance().getReference("users")
-                    .child(currentUserUid)
+                    .child(contactUserChatInfo.contactUid)
                     .child("chats")
                     .child(chatName)
                     .child("notRead")
@@ -86,7 +81,7 @@ class ChatRoom : AppCompatActivity() {
 
         //Getting current User Nickname
         FirebaseDatabase.getInstance().getReference("users")
-                .child(currentUserUid)
+                .child(contactUserChatInfo.contactUid)
                 .addListenerForSingleValueEvent(object : ValueEventListener{
                     override fun onCancelled(p0: DatabaseError?) {
                         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -102,7 +97,7 @@ class ChatRoom : AppCompatActivity() {
 
         //Getting contact User Nickname and imageUri
         FirebaseDatabase.getInstance().getReference("users")
-                .child(contactUserUid)
+                .child(currentUserChatInfo.contactUid)
                 .addListenerForSingleValueEvent(object : ValueEventListener{
                     override fun onCancelled(p0: DatabaseError?) {
                         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -155,7 +150,7 @@ class ChatRoom : AppCompatActivity() {
             if (editTextMessage.text.isNotEmpty()) {
                 val message = Message()
                 message.message = editTextMessage.text.toString()
-                message.sender = currentUserUid!!
+                message.sender = contactUserChatInfo.contactUid!!
                 message.createdAt = Calendar.getInstance().time.time
 
                 editTextMessage.setText("")
@@ -168,7 +163,7 @@ class ChatRoom : AppCompatActivity() {
 
 
                 FirebaseDatabase.getInstance().getReference("users")
-                        .child(currentUserUid)
+                        .child(contactUserChatInfo.contactUid)
                         .child("chats")
                         .child(chatName)
                         .setValue(currentUserChatInfo)
@@ -180,7 +175,7 @@ class ChatRoom : AppCompatActivity() {
 
 
                 FirebaseDatabase.getInstance().getReference("users")
-                        .child(contactUserUid)
+                        .child(currentUserChatInfo.contactUid)
                         .child("chats")
                         .child(chatName)
                         .child("notRead")
@@ -228,7 +223,9 @@ class ChatRoom : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == R.id.borrowBook){
             val borrowIntent = Intent(applicationContext, BorrowBook::class.java)
-            borrowIntent.putExtra("contactUid", contactUserUid);
+            borrowIntent.putExtra("contactUid", currentUserChatInfo.contactUid);
+            borrowIntent.putExtra("currentUserUid", contactUserChatInfo.contactUid);
+            borrowIntent.putExtra("currentUserNickname", contactUserChatInfo.contactNickname);
             startActivity(borrowIntent)
         }else
             this.finish()
@@ -239,7 +236,7 @@ class ChatRoom : AppCompatActivity() {
         //resetting notRead
         if (chatStatus == "old") {
             FirebaseDatabase.getInstance().getReference("users")
-                    .child(currentUserUid)
+                    .child(contactUserChatInfo.contactUid)
                     .child("chats")
                     .child(chatName)
                     .child("notRead")

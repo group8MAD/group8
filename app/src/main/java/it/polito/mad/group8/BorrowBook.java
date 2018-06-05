@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -21,6 +22,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class BorrowBook extends AppCompatActivity {
@@ -28,11 +30,15 @@ public class BorrowBook extends AppCompatActivity {
     private Button chooseBookButton;
     private Button startDateButton;
     private Button endDateButton;
+    private Button sendRequest;
     private Calendar calendarStart;
     private Calendar calendarEnd;
     private Map<String, String> books;
 
     private String bookOwnerUid;
+    private String currentUserUid;
+    private String currentUserNickname;
+    Request request;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,16 +46,25 @@ public class BorrowBook extends AppCompatActivity {
         setContentView(R.layout.activity_borrow_book);
 
         bookOwnerUid = getIntent().getStringExtra("contactUid");
+        currentUserUid = getIntent().getStringExtra("currentUserUid");
+        currentUserNickname = getIntent().getStringExtra("currentUserNickname");
         books = new HashMap<>();
         //getting View
         chooseBookButton = findViewById(R.id.chooseBook);
         endDateButton = findViewById(R.id.endDateButton);
         startDateButton = findViewById(R.id.startDateButton);
+        sendRequest = findViewById(R.id.sendRequest);
         calendarStart = Calendar.getInstance();
         calendarEnd = Calendar.getInstance();
         //setting dates
         calendarEnd.set(calendarStart.get(Calendar.YEAR), calendarStart.get(Calendar.MONTH)+1, calendarStart.get(Calendar.DAY_OF_MONTH));
+        //setting request
+        request = new Request();
+        request.setRequesterUid(currentUserUid);
+        request.setRequesterNickname(currentUserNickname);
 
+
+        Log.e("\t\tBorrowBook\t\t\t\t", bookOwnerUid);
 
         startDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +75,7 @@ public class BorrowBook extends AppCompatActivity {
                         calendarStart.set(year,month,dayOfMonth);
                         calendarEnd.set(year,month+1,dayOfMonth);
                         startDateButton.setText(calendarStart.get(Calendar.DAY_OF_MONTH) +"/"+ String.valueOf(calendarStart.get(Calendar.MONTH)+1) +"/"+calendarStart.get(Calendar.YEAR));
+                        request.setStartDate(String.valueOf(calendarStart.getTimeInMillis()));
                     }
                 },calendarStart.get(Calendar.YEAR), calendarStart.get(Calendar.MONTH), calendarStart.get(Calendar.DAY_OF_MONTH));
 
@@ -78,6 +94,7 @@ public class BorrowBook extends AppCompatActivity {
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         calendarEnd.set(year,month+1,dayOfMonth);
                         endDateButton.setText(calendarEnd.get(Calendar.DAY_OF_MONTH) +"/"+ String.valueOf(calendarEnd.get(Calendar.MONTH)+1) +"/"+calendarEnd.get(Calendar.YEAR));
+                        request.setEndDate(String.valueOf(calendarEnd.getTimeInMillis()));
                     }
                 },calendarStart.get(Calendar.YEAR), calendarStart.get(Calendar.MONTH), calendarStart.get(Calendar.DAY_OF_MONTH));
 
@@ -102,6 +119,12 @@ public class BorrowBook extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                             chooseBookButton.setText(booksTitle.get(((AlertDialog)dialog).getListView().getCheckedItemPosition()));
+                            request.setBookTitle(chooseBookButton.getText().toString());
+                            request.setBookIsbn(books.entrySet().stream()
+                                                    .filter(entry -> Objects.equals(entry.getValue(),request.getBookTitle()))
+                                                    .map(Map.Entry::getKey)
+                                                    .collect(Collectors.joining())
+                            );
                         }
                 });
                 builder.setSingleChoiceItems(booksTitle.toArray(new CharSequence[booksTitle.size()]), 0, new DialogInterface.OnClickListener() {
@@ -111,6 +134,30 @@ public class BorrowBook extends AppCompatActivity {
                     }
                 });
                 builder.show();
+            }
+        });
+
+        sendRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("requesterUID\t\t", request.getRequesterUid());
+                Log.e("requesterNickname\t\t", request.getRequesterNickname());
+                Log.e("bookISBN\t\t", request.getBookIsbn());
+                Log.e("bookTitle\t\t", request.getBookTitle());
+                Log.e("startDate\t\t", request.getStartDate());
+                Log.e("endDate\t\t", request.getEndDate());
+
+                String requestKey = FirebaseDatabase.getInstance().getReference("users")
+                                                                    .child(bookOwnerUid)
+                                                                    .child("requests")
+                                                                    .push().getKey();
+
+                FirebaseDatabase.getInstance().getReference("users")
+                        .child(bookOwnerUid)
+                        .child("requests")
+                        .child(requestKey)
+                        .setValue(request);
+
             }
         });
 

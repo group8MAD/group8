@@ -42,7 +42,9 @@
         <activity android:name=".ChatList" />
         <activity android:name=".ChatRoom" />
         <activity android:name=".PublicShowProfile" />
-        <activity android:name=".BorrowBook"></activity>
+        <activity android:name=".BorrowBook" />
+        <activity android:name=".RequestActivity" />
+        <activity android:name=".SingleRequestShow"></activity>
     </application>
 
 </manifest>
