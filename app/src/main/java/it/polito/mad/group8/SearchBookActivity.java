@@ -82,27 +82,28 @@ public class SearchBookActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
 
         updateUi(FirebaseAuth.getInstance().getCurrentUser());
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            //Adding listener on messageCounter
+            FirebaseDatabase.getInstance().getReference("users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child("chats")
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            int counter = 0;
+                            for (DataSnapshot chat : dataSnapshot.getChildren()) {
+                                counter += Integer.parseInt(chat.child("notRead").getValue().toString());
+                            }
+                            setMenuCounter(counter);
 
-        //Adding listener on messageCounter
-        FirebaseDatabase.getInstance().getReference("users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("chats")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int counter = 0;
-                        for (DataSnapshot chat: dataSnapshot.getChildren()){
-                            counter += Integer.parseInt(chat.child("notRead").getValue().toString());
                         }
-                        setMenuCounter(counter);
 
-                    }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                        }
+                    });
+        }
         // Creation of the lateral menu
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -166,8 +167,7 @@ public class SearchBookActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            updateUi(FirebaseAuth.getInstance().getCurrentUser());
+        updateUi(FirebaseAuth.getInstance().getCurrentUser());
 
     }
 
