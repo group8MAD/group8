@@ -145,7 +145,6 @@ class ChatList : AppCompatActivity() {
 
     private fun setMenuCounter(count: Int) {
         val view = mNavigationView?.getMenu()?.findItem(R.id.chats)?.actionView as TextView
-        mNavigationView?.getMenu()?.findItem(R.id.chats)?.title = "asd"
         view.text = count.toString()
     }
 

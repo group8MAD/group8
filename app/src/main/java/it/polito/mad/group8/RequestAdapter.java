@@ -12,6 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -38,7 +42,11 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
     public void onBindViewHolder(@NonNull RequestAdapter.RequestHolder holder, int position) {
         Request request = requests.get(position);
 
+
+        //setting
         holder.title.setText(request.getRequesterNickname());
+        if (!request.getRequesterImageUri().isEmpty())
+            Picasso.get().load(request.getRequesterImageUri()).into(holder.thumbnail);
 
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,10 +54,13 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
                 Intent intent = new Intent(context, SingleRequestShow.class);
                 intent.putExtra("requesterUid", request.getRequesterUid());
                 intent.putExtra("requesterNickname", request.getRequesterNickname());
+                intent.putExtra("requesterImageUri", request.getRequesterImageUri());
                 intent.putExtra("bookIsbn", request.getBookIsbn());
                 intent.putExtra("bookTitle", request.getBookTitle());
                 intent.putExtra("startDate", request.getStartDate());
                 intent.putExtra("endDate", request.getEndDate());
+                intent.putExtra("city", request.getCity());
+                intent.putExtra("province", request.getProvince());
                 context.startActivity(intent);
             }
         });

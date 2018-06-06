@@ -71,4 +71,13 @@
     <string name="requests">Requests</string>
     <string name="accept">Accept Request</string>
     <string name="deny">Deny Request</string>
+    <string name="wantsToBorrow">wants to borrow</string>
+    <string name="from">from</string>
+    <string name="to">to</string>
+    <string name="requestSent">You successfully sent the request! </string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="reminderAccept">Are you sure you want to accept this request?</string>
+    <string name="reminderDecline">Are you sure you want to decline this request?</string>
+    <string name="alreadySent">You\'ve already sent a request for this book…\n Do you want to override it?</string>
 </resources>

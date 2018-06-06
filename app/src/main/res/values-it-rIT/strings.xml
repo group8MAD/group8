@@ -37,7 +37,7 @@
     <string name="contact">Contatta utente</string>
     <string name="getReview">Leggi recensioni</string>
     <string name="writeReview">Scrivi una recensione</string>
-    <string name="borrow">Ottieni un libro</string>
+    <string name="borrow">Chiedi in prestito un libro</string>
     <string name="userProfile">Profilo Utente</string>
     <string name="userBorrow">Stay prendendo un libro in prestito da: </string>
     <string name="startingDate">Data Iniziale</string>
@@ -50,4 +50,13 @@
     <string name="requests">Richieste</string>
     <string name="accept">Accetta Richiesta</string>
     <string name="deny">Rifiuta Richiesta</string>
+    <string name="wantsToBorrow">desidera prendere in prestito</string>
+    <string name="from">dal</string>
+    <string name="to">al</string>
+    <string name="requestSent">La tua richiesta è stata inviata corettamente </string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="reminderAccept">Sei sicuro di voler accettare questa richiesta?</string>
+    <string name="reminderDecline">Sei sicuro di voler rifiutare questa richiesta?</string>
+    <string name="alreadySent">Hai già mandato una richiesta per questo libro…\n Vuoi sovrascriverla?</string>
 </resources>

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -147,16 +149,74 @@ public class BorrowBook extends AppCompatActivity {
                 Log.e("startDate\t\t", request.getStartDate());
                 Log.e("endDate\t\t", request.getEndDate());
 
-                String requestKey = FirebaseDatabase.getInstance().getReference("users")
-                                                                    .child(bookOwnerUid)
-                                                                    .child("requests")
-                                                                    .push().getKey();
-
                 FirebaseDatabase.getInstance().getReference("users")
-                        .child(bookOwnerUid)
-                        .child("requests")
-                        .child(requestKey)
-                        .setValue(request);
+                        .child(request.getRequesterUid())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                request.setCity(dataSnapshot.child("city").getValue().toString());
+                                request.setProvince(dataSnapshot.child("province").getValue().toString());
+                                request.setRequesterImageUri(dataSnapshot.child("imageUri").getValue().toString());
+                                FirebaseDatabase.getInstance().getReference("users")
+                                        .child(bookOwnerUid)
+                                        .child("requests")
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                int flag = 0;
+                                                for (DataSnapshot requestTmp: dataSnapshot.getChildren()){
+                                                    if (        Objects.requireNonNull(requestTmp.child("bookIsbn").getValue()).toString().equals(request.getBookIsbn())
+                                                            &&  Objects.requireNonNull(requestTmp.child("requesterUid").getValue()).toString().equals(request.getRequesterUid())){
+
+                                                        flag = 1;
+                                                        //alertDialog
+                                                        android.support.v7.app.AlertDialog.Builder alertBuilder = new android.support.v7.app.AlertDialog.Builder(BorrowBook.this);
+                                                        //setting positive button
+                                                        alertBuilder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+
+                                                            }
+                                                        });
+                                                        //setting positive button
+                                                        alertBuilder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+
+                                                            }
+                                                        });
+                                                        alertBuilder.setMessage(getString(R.string.alreadySent));
+                                                        alertBuilder.show();
+                                                    }
+                                                }
+                                                if (flag == 0){
+                                                    FirebaseDatabase.getInstance().getReference("users")
+                                                            .child(bookOwnerUid)
+                                                            .child("requests")
+                                                            .child(dataSnapshot.getRef().push().getKey())
+                                                            .setValue(request);
+                                                    Toast.makeText(BorrowBook.this,R.string.requestSent,Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+
+
 
             }
         });

@@ -4,18 +4,24 @@ public class Request {
 
     private String requesterUid;
     private String requesterNickname;
+    private String requesterImageUri;
     private String bookIsbn;
     private String BookTitle;
     private String startDate;
     private String endDate;
+    private String city;
+    private String province;
 
     public Request() {
         requesterUid = "";
         requesterNickname = "";
+        requesterImageUri = "";
         bookIsbn = "";
         BookTitle = "";
         startDate = "";
         endDate = "";
+        city = "";
+        province = "";
     }
 
     public String getRequesterUid() {
@@ -64,5 +70,29 @@ public class Request {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getRequesterImageUri() {
+        return requesterImageUri;
+    }
+
+    public void setRequesterImageUri(String requesterImageUri) {
+        this.requesterImageUri = requesterImageUri;
     }
 }

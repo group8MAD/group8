@@ -83,8 +83,26 @@ public class SearchBookActivity extends AppCompatActivity {
 
         updateUi(FirebaseAuth.getInstance().getCurrentUser());
 
+        //Adding listener on messageCounter
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("chats")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int counter = 0;
+                        for (DataSnapshot chat: dataSnapshot.getChildren()){
+                            counter += Integer.parseInt(chat.child("notRead").getValue().toString());
+                        }
+                        setMenuCounter(counter);
 
+                    }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
         // Creation of the lateral menu
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -148,26 +166,9 @@ public class SearchBookActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateUi(FirebaseAuth.getInstance().getCurrentUser());
-        FirebaseDatabase.getInstance().getReference("users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("chats")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int counter = 0;
-                        for (DataSnapshot chat: dataSnapshot.getChildren()){
-                            counter += Integer.parseInt(chat.child("notRead").getValue().toString());
-                        }
-                        setMenuCounter(counter);
-                        
-                    }
+        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+            updateUi(FirebaseAuth.getInstance().getCurrentUser());
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
     }
 
     private void setMenuCounter(int count) {

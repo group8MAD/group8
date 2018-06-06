@@ -1,5 +1,7 @@
 package it.polito.mad.group8;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +10,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -46,17 +49,30 @@ public class RequestActivity extends AppCompatActivity {
                 .child("users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("requests")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addChildEventListener(new ChildEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.e("\t\tRequestActivity\t\t\t\t ", dataSnapshot.getKey());
-                        for (DataSnapshot request : dataSnapshot.getChildren()){
-                            Request requestTmp = request.getValue(Request.class);
-                            Log.e("\t\tRequestActivity\t\t\t\t ", requestTmp.getRequesterNickname());
-
-                            requests.add(requestTmp);
-                        }
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Request requestTmp = dataSnapshot.getValue(Request.class);
+                        requests.add(0, requestTmp);
                         adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        requests.removeIf(t->t.getRequesterUid().equals(dataSnapshot.child("requesterUid").getValue().toString())
+                                        && t.getBookIsbn().equals(dataSnapshot.child("bookIsbn").getValue().toString()));
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
                     }
 
                     @Override
