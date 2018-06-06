@@ -11,6 +11,11 @@
             android:icon="@drawable/ic_book_24dp"
             android:title="@string/user_books" />   -->
         <item
+            android:title="@string/showbooks"
+            android:icon="@mipmap/open_book"
+            android:id="@+id/nav_show_books"
+            />
+        <item
             android:id="@+id/nav_share_books_logged"
             android:icon="@drawable/ic_book_24dp"
             android:title="@string/share_books" />
@@ -32,5 +37,6 @@
             android:icon="@mipmap/logout"
             android:title="@string/logout"
             />
+
     </group>
 </menu>

@@ -54,42 +54,6 @@ public class ShowBooks extends AppCompatActivity {
         mNavigationView = findViewById(R.id.nav_view);
         mDrawerLayout.addDrawerListener(mToggle);
 
-        // Creation of the lateral menu
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                switch (item.getItemId()){
-                    case R.id.nav_profile:
-                        finish();
-                        startActivity(new Intent(ShowBooks.this, ShowProfile.class));
-                        return true;
-
-                    /*case R.id.nav_user_books:
-                        mDrawerLayout.closeDrawers();
-                        return true;*/
-
-                    case R.id.nav_share_books_logged:
-                        finish();
-                        startActivity(new Intent(ShowBooks.this, ShareBookActivity.class));
-                        return true;
-
-                    case R.id.nav_search_books:
-                        finish();
-                        startActivity(new Intent(ShowBooks.this, SearchBookActivity.class));
-                        return true;
-
-                    case R.id.logout:
-                        signOut();
-                        return true;
-
-                    default:
-                        mDrawerLayout.closeDrawers();
-                }
-                return true;
-            }
-        });
-
 
         list = (ListView) findViewById(R.id.listview);
 
