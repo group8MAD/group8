@@ -97,4 +97,5 @@
     <string name="sendReview">Send review?</string>
     <string name="reviewNotComplete">Review is not complete!</string>
     <string name="asd">asd</string>
+    <string name="showbooks">Show my books</string>
 </resources>

@@ -76,4 +76,5 @@
     <string name="rateCommentHint">Scrivi qui la tua recensione</string>
     <string name="sendReview">Manda Recensione?</string>
     <string name="reviewNotComplete">La recensione non è completa!</string>
+    <string name="showbooks">Mostra i miei libri</string>
 </resources>
