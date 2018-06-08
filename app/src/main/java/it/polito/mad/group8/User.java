@@ -28,6 +28,7 @@ public class User {
         this.province="";
         int randomno = (int) (Math.random()*27839)+1;
         this.nickname ="default "+ String.valueOf(randomno);
+        booksSaved = null;
 
     }
 

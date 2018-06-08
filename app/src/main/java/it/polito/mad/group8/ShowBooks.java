@@ -7,14 +7,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,9 +46,10 @@ public class ShowBooks extends AppCompatActivity {
     private DatabaseReference myRef;
     private String userID;
 
-    //The layout
-    private ListView list;
-    private Button button;
+    ArrayList<Book> booksSaved = new ArrayList<>();
+
+    // Add widgets
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,38 +60,83 @@ public class ShowBooks extends AppCompatActivity {
         mNavigationView = findViewById(R.id.nav_view);
         mDrawerLayout.addDrawerListener(mToggle);
 
-
-        list = (ListView) findViewById(R.id.listview);
-        button = (Button) findViewById(R.id.button_books);
+        recyclerView = findViewById(R.id.recyclerView);
 
         //declare the db reference object to access the db (if not signed in, not usable)
-
         auth= FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
         myRef = db.getReference();
         FirebaseUser user = auth.getCurrentUser();
         userID = user.getUid();
 
+        updateUi(FirebaseAuth.getInstance().getCurrentUser());
 
 
-        button.setOnClickListener(new View.OnClickListener() {
+        // Creation of the lateral menu
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                myRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Private method that shows the data whenever its updated
-                        showData(dataSnapshot);
-                    }
+                switch (item.getItemId()){
+                    case R.id.nav_profile:
+                        mDrawerLayout.closeDrawers();
+                        startActivity(new Intent(ShowBooks.this, ShowProfile.class));
+                        return true;
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    case R.id.nav_user_books:
+                        mDrawerLayout.closeDrawers();
+                        return true;
 
-                    }
-                });
+                    case R.id.nav_share_books_logged:
+                        mDrawerLayout.closeDrawers();
+                        startActivity(new Intent(getApplicationContext(), ShareBookActivity.class));
+                        return true;
 
+                    case R.id.ongoing:
+                        mDrawerLayout.closeDrawers();
+                        startActivity(new Intent(getApplicationContext(), OngoingExchangesActivity.class));
+                        return true;
 
+                    case R.id.chats:
+                        mDrawerLayout.closeDrawers();
+                        startActivity(new Intent(getApplicationContext(), ChatList.class));
+                        return true;
+
+                    case R.id.nav_search_books:
+                        mDrawerLayout.closeDrawers();
+                        startActivity(new Intent(getApplicationContext(), SearchBookActivity.class));
+                        return true;
+
+                    case R.id.requests:
+                        mDrawerLayout.closeDrawers();
+                        startActivity(new Intent(getApplicationContext(), RequestActivity.class));
+                        return true;
+
+                    case R.id.logout:
+                        signOut();
+                        return true;
+
+                    default:
+                        mDrawerLayout.closeDrawers();
+                }
+                return true;
+            }
+
+        });
+
+        // Assignment of a Layout Manager, in this case, Liner Layout
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        //myRef = db.getReference("users/"+this.userID);
+        myRef = db.getReference("users/"+"MHEQvCHw7BYxpVufiejb0A4JM9q1");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                showData(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
@@ -96,8 +144,29 @@ public class ShowBooks extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
+        mToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (mToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        //updateUi(FirebaseAuth.getInstance().getCurrentUser());
+
         FirebaseDatabase.getInstance().getReference("users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("chats")
@@ -108,7 +177,7 @@ public class ShowBooks extends AppCompatActivity {
                         for (DataSnapshot chat: dataSnapshot.getChildren()){
                             counter += Integer.parseInt(chat.child("notRead").getValue().toString());
                         }
-                        setMenuCounter(counter);
+                        //setMenuCounter(counter);
 
                     }
 
@@ -119,33 +188,55 @@ public class ShowBooks extends AppCompatActivity {
                 });
     }
 
-    private void setMenuCounter(int count) {
-        if(mNavigationView.getMenu().findItem(R.id.chats).getActionView() != null){
-            TextView view = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
-            mNavigationView.getMenu().findItem(R.id.chats).setTitle("asd");
-            view.setText(String.valueOf(count));
-        }
+    /*private void setMenuCounter(int count) {
+        TextView view = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
+        view.setText(String.valueOf(count));
+    }*/
 
-    }
     private void showData(DataSnapshot dataSnapshot) {
-        for (DataSnapshot ds : dataSnapshot.getChildren()){
-            User uInfo = new User();
+        if(!dataSnapshot.child("books").exists()){
+            return;
+        }else {
+            //User uInfo = new User();
+            ArrayList<Book> booksSaved = new ArrayList<>();
+            //DatabaseReference dbAux = db.getReference("books");
+
             //im trying to get the books saved by title (the isbn is not a property in the book class)
-            uInfo.setBooksSaved(ds.child(userID).getValue(User.class).getBookList());
+            for (DataSnapshot ds: dataSnapshot.child("books").getChildren()) {
+                Book bookAux = new Book();
+                String idBook = ds.getKey();
+                DatabaseReference dbAux = db.getReference("books/" + idBook);
+                dbAux.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        bookAux.setTitle(dataSnapshot.child("title").getValue().toString());
+                        Log.d(TAG, "Title: "+ bookAux.getTitle().toString());
+                        bookAux.setAuthors(dataSnapshot.child("authors").getValue().toString());
+                        Log.d(TAG, "Author: "+ bookAux.getAuthors().toString());
+                        bookAux.setEditionYear(dataSnapshot.child("editionYear").getValue().toString());
+                        Log.d(TAG, "Edition Year: "+ bookAux.getEditionYear().toString());
+                        booksSaved.add(bookAux);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+            }
+            //uInfo.setBooksSaved(dataSnapshot.getValue(User.class).getBookList());
 
             //show the info to see if its done correctly
-            Log.d(TAG, "showData: booklist" + uInfo.getTitleList());
+            //Log.d(TAG, "showData: booklist" + uInfo.getTitleList());
 
-            ArrayList<String> array = new ArrayList<String>();
+            /*ArrayList<Book> books = new ArrayList<Book>();
             //bucle that puts the information of each book in an array
-            for(Book book : uInfo.getBookList()){
-                array.add(book.getTitle());
-                array.add(book.getAuthors());
-                array.add(book.getEditionYear());
-            }
+            for (Book book : booksSaved) {
+                books.add(book);
+            }*/
 
-            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, array);
-            list.setAdapter(adapter);
+            ShowBooksAdapter adapter = new ShowBooksAdapter(booksSaved, ShowBooks.this);
+            recyclerView.setAdapter(adapter);
         }
     }
 
@@ -159,6 +250,31 @@ public class ShowBooks extends AppCompatActivity {
                         startActivity(new Intent(ShowBooks.this, SearchBookActivity.class));
                     }
                 });
+    }
+
+    //Update the interface in case of signing in or out
+    public void updateUi(FirebaseUser currentUser){
+        if (currentUser != null){
+            this.userID = currentUser.getUid();
+            mNavigationView.getMenu().clear();
+            mNavigationView.inflateMenu(R.menu.menu_drawer_loggedin);
+            myRef = db.getReference("users/"+"MHEQvCHw7BYxpVufiejb0A4JM9q1");
+            myRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    showData(dataSnapshot);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }else{
+            mNavigationView.getMenu().clear();
+            mNavigationView.inflateMenu(R.menu.menu_drawer_not_loggedin);
+        }
     }
 
 

@@ -80,10 +80,10 @@ public class ShowProfile extends AppCompatActivity {
                         mDrawerLayout.closeDrawers();
                         return true;
 
-                    case R.id.nav_show_books:
+                    /*case R.id.nav_show_books:
                         finish();
                         startActivity(new Intent(ShowProfile.this, ShowBooks.class));
-                        return true;
+                        return true;*/
 
                     case R.id.nav_share_books_logged:
                         finish();
@@ -97,6 +97,11 @@ public class ShowProfile extends AppCompatActivity {
 
                     case R.id.nav_search_books:
                         startActivity(new Intent(ShowProfile.this, SearchBookActivity.class));
+                        return true;
+
+                    case R.id.requests:
+                        mDrawerLayout.closeDrawers();
+                        startActivity(new Intent(getApplicationContext(), RequestActivity.class));
                         return true;
 
                     case R.id.logout:
