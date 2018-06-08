@@ -79,7 +79,9 @@ public class ShowProfile extends AppCompatActivity {
                     case R.id.nav_profile:
                         mDrawerLayout.closeDrawers();
                         return true;
+
                     case R.id.nav_show_books:
+                        finish();
                         startActivity(new Intent(ShowProfile.this, ShowBooks.class));
                         return true;
 

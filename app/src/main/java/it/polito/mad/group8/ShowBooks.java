@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -68,32 +69,26 @@ public class ShowBooks extends AppCompatActivity {
         FirebaseUser user = auth.getCurrentUser();
         userID = user.getUid();
 
-        authListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser mUser = firebaseAuth.getCurrentUser();
-                if(mUser != null){
-                    //User is signed in
-                    Log.d(TAG, "onAuthStateChanged: signed in" + mUser.getUid());
-                    Toast.makeText(ShowBooks.this, "Succesfully signed in with" + mUser.getUid(), Toast.LENGTH_LONG).show();;
-                } else{
-                    //User signed out
-                    Log.d(TAG, "onAuthStateChanged: signed out");
-                    Toast.makeText(ShowBooks.this, "Succesfully signed out", Toast.LENGTH_LONG).show();;
 
-                }
-            }
-        };
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //Private method that shows the data whenever its updated
-                showData(dataSnapshot);
-            }
+            public void onClick(View v) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                myRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Private method that shows the data whenever its updated
+                        showData(dataSnapshot);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
 
             }
         });
@@ -125,9 +120,12 @@ public class ShowBooks extends AppCompatActivity {
     }
 
     private void setMenuCounter(int count) {
-        TextView view = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
-        mNavigationView.getMenu().findItem(R.id.chats).setTitle("asd");
-        view.setText(String.valueOf(count));
+        if(mNavigationView.getMenu().findItem(R.id.chats).getActionView() != null){
+            TextView view = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
+            mNavigationView.getMenu().findItem(R.id.chats).setTitle("asd");
+            view.setText(String.valueOf(count));
+        }
+
     }
     private void showData(DataSnapshot dataSnapshot) {
         for (DataSnapshot ds : dataSnapshot.getChildren()){
@@ -164,17 +162,5 @@ public class ShowBooks extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        auth.addAuthStateListener(authListener);
-    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(authListener != null){
-            auth.removeAuthStateListener(authListener);
-        }
-    }
 }
