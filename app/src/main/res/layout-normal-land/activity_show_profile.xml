@@ -7,8 +7,11 @@
     android:fitsSystemWindows="true"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ShowProfile">
-
-    <RelativeLayout
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        >
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -79,7 +82,81 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             />
+        <TextView
+            android:id="@+id/nicknameDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/nickname"
+            android:layout_above="@id/nickname"
+            />
+        <EditText
+            android:id="@+id/nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="5dp"
+            android:hint="@string/nicknameHint"
+            android:maxLines="1"
+            android:layout_centerVertical="true"
 
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            />
+        <TextView
+            android:id="@+id/cityDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/city"
+            android:layout_above="@id/city"
+            />
+        <EditText
+            android:id="@+id/city"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="5dp"
+            android:hint="@string/cityHint"
+            android:maxLines="1"
+            android:layout_centerVertical="true"
+
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            />
+        <TextView
+            android:id="@+id/provinceDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/province"
+            android:layout_above="@id/province"
+            />
+        <EditText
+            android:id="@+id/province"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="5dp"
+            android:hint="@string/provinceHint"
+            android:maxLines="1"
+            android:layout_centerVertical="true"
+
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            />
         <TextView
             android:id="@+id/bioDescription"
             android:layout_width="match_parent"
@@ -110,7 +187,8 @@
             />
 
 
-    </RelativeLayout>
+    </LinearLayout>
+    </ScrollView>
 
     <android.support.design.widget.NavigationView
         app:headerLayout="@layout/drawer_header"
