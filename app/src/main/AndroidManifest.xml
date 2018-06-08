@@ -44,7 +44,9 @@
         <activity android:name=".PublicShowProfile" />
         <activity android:name=".BorrowBook" />
         <activity android:name=".RequestActivity" />
-        <activity android:name=".SingleRequestShow"></activity>
+        <activity android:name=".SingleRequestShow" />
+        <activity android:name=".OngoingExchangesActivity" />
+        <activity android:name=".RateUserActivity"></activity>
     </application>
 
 </manifest>

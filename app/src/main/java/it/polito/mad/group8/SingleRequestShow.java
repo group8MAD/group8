@@ -1,7 +1,7 @@
 package it.polito.mad.group8;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,28 +19,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 public class SingleRequestShow extends AppCompatActivity {
 
     //Request info
-    private String requesterUid;
-    private String requesterNickname;
-    private String requesterUri;
-    private String bookIsbn;
-    private String bookTitle;
-    private String startDate;
-    private String endDate;
-    private String city;
-    private String province;
+    private OngoingTransaction ongoingTransaction;
 
     //View
     private TextView nicknameTV;
     private ImageView imageTV;
-    private ProgressBar ratingBar;
+    private ProgressDialog progressDialog;
     private TextView description1;
     private TextView description2;
     private TextView cityProvince;
@@ -49,16 +38,18 @@ public class SingleRequestShow extends AppCompatActivity {
     private Button accept;
     private Button deny;
     //Date formatter
-    SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_request_show);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        progressDialog = new ProgressDialog(SingleRequestShow.this);
+        progressDialog.show();
+        ongoingTransaction = new OngoingTransaction();
         //Getting view
         nicknameTV = findViewById(R.id.nickname);
-        ratingBar = findViewById(R.id.progressBar);
         imageTV = findViewById(R.id.image);
         description1 = findViewById(R.id.description1);
         description2 = findViewById(R.id.description2);
@@ -68,30 +59,30 @@ public class SingleRequestShow extends AppCompatActivity {
         deny = findViewById(R.id.deny);
 
         //Getting strings intent
-        requesterUid = getIntent().getStringExtra("requesterUid");
-        requesterNickname = getIntent().getStringExtra("requesterNickname");
-        requesterUri = getIntent().getStringExtra("requesterImageUri");
-        bookIsbn = getIntent().getStringExtra("bookIsbn");
-        bookTitle = getIntent().getStringExtra("bookTitle");
-        startDate = getIntent().getStringExtra("startDate");
-        endDate = getIntent().getStringExtra("endDate");
-        city = getIntent().getStringExtra("city");
-        province = getIntent().getStringExtra("province");
-
+        ongoingTransaction.setRequesterUid(getIntent().getStringExtra("requesterUid"));
+        ongoingTransaction.setRequesterNickname(getIntent().getStringExtra("requesterNickname"));
+        ongoingTransaction.setRequesterImageUri(getIntent().getStringExtra("requesterImageUri"));
+        ongoingTransaction.setBookIsbn(getIntent().getStringExtra("bookIsbn"));
+        ongoingTransaction.setBookTitle( getIntent().getStringExtra("bookTitle"));
+        ongoingTransaction.setStartDate(getIntent().getStringExtra("startDate"));
+        ongoingTransaction.setEndDate(getIntent().getStringExtra("endDate"));
+        ongoingTransaction.setCity(getIntent().getStringExtra("city"));
+        ongoingTransaction.setProvince(getIntent().getStringExtra("province"));
+        ongoingTransaction.setBookOwnerUid(FirebaseAuth.getInstance().getCurrentUser().getUid());
         //setting data
-        nicknameTV.setText(requesterNickname);
-        String description1StringHTML = "<b>"+requesterNickname+"</b> "+getString(R.string.wantsToBorrow)+" \"<b>"+bookTitle+"</b>\"";
-        String description2StringHTML = getString(R.string.from)+" <b>"+formatter.format(Long.parseLong(startDate))+"</b> "+ getString(R.string.to)+" <b>"+formatter.format(Long.parseLong(endDate))+"</b>";
-        String cityProvinceString = city+" ( "+province+" )";
-        String isbnStringHYML = "ISBN <b>"+bookIsbn+"</b>";
+        nicknameTV.setText(ongoingTransaction.getRequesterNickname());
+        String description1StringHTML = "<b>"+ ongoingTransaction.getRequesterNickname()+"</b> "+getString(R.string.wantsToBorrow)+" \"<b>"+ ongoingTransaction.getBookTitle()+"</b>\"";
+        String description2StringHTML = getString(R.string.from)+" <b>"+formatter.format(Long.parseLong(ongoingTransaction.getStartDate()))+"</b> "+ getString(R.string.to)+" <b>"+formatter.format(Long.parseLong(ongoingTransaction.getEndDate()))+"</b>";
+        String cityProvinceString = ongoingTransaction.getCity()+" ( "+ ongoingTransaction.getProvince()+" )";
+        String isbnStringHYML = "ISBN <b>"+ ongoingTransaction.getBookIsbn()+"</b>";
         description1.setText(Html.fromHtml(description1StringHTML));
         description2.setText(Html.fromHtml(description2StringHTML));
         cityProvince.setText(cityProvinceString);
         isbn.setText(Html.fromHtml(isbnStringHYML));
-        if (!requesterUri.isEmpty())
-            Picasso.get().load(requesterUri).into(imageTV);
+        if (!ongoingTransaction.getRequesterImageUri().isEmpty())
+            Picasso.get().load(ongoingTransaction.getRequesterImageUri()).into(imageTV);
 
-        ratingBar.setVisibility(View.GONE);
+        progressDialog.dismiss();
 
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +93,51 @@ public class SingleRequestShow extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
+                        String id = FirebaseDatabase.getInstance().getReference("users")
+                                    .child(ongoingTransaction.getRequesterUid())
+                                    .child("ongoing")
+                                    .push().getKey();
+
+                        FirebaseDatabase.getInstance().getReference("users")
+                                .child(ongoingTransaction.getRequesterUid())
+                                .child("ongoing")
+                                .child(id)
+                                .setValue(ongoingTransaction);
+
+
+                        FirebaseDatabase.getInstance().getReference("users")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child("ongoing")
+                                .child(id)
+                                .setValue(ongoingTransaction);
+
+
+                        FirebaseDatabase.getInstance().getReference("books")
+                                .child(ongoingTransaction.getBookIsbn())
+                                .child("owners")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child("status")
+                                .setValue("unavailable");
+
+                        FirebaseDatabase.getInstance().getReference("users")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child("requests")
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot requestTmp: dataSnapshot.getChildren()){
+                                            if (requestTmp.child("requesterUid").getValue().toString().equals(ongoingTransaction.getRequesterUid()) && requestTmp.child("bookIsbn").getValue().toString().equals(ongoingTransaction.getBookIsbn())){
+                                                requestTmp.getRef().removeValue();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                        finish();
                     }
                 });
                 //setting positive button
@@ -131,9 +167,9 @@ public class SingleRequestShow extends AppCompatActivity {
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot request: dataSnapshot.getChildren()){
-                                            if (request.child("requesterUid").getValue().toString().equals(requesterUid) && request.child("bookIsbn").getValue().toString().equals(bookIsbn)){
-                                                request.getRef().removeValue();
+                                        for (DataSnapshot requestTmp: dataSnapshot.getChildren()){
+                                            if (requestTmp.child("requesterUid").getValue().toString().equals(ongoingTransaction.getRequesterUid()) && requestTmp.child("bookIsbn").getValue().toString().equals(ongoingTransaction.getBookIsbn())){
+                                                requestTmp.getRef().removeValue();
                                                 finish();
                                             }
                                         }

@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -16,48 +15,46 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RequestActivity extends AppCompatActivity {
-
+public class OngoingExchangesActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private RequestAdapter adapter;
-    private List<Request> requests;
+    private OngoingExchangesActivityAdapter adapter;
     private TextView nothing;
+    private List<OngoingTransaction> ongoingTransactions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_request);
+        setContentView(R.layout.activity_ongoing_exchanges);
 
-        requests = new ArrayList<>();
-
+        ongoingTransactions = new ArrayList<>();
         nothing = findViewById(R.id.nothing);
         recyclerView = findViewById(R.id.recyclerView_requests_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        adapter = new RequestAdapter(requests, RequestActivity.this);
+        getSupportActionBar().setTitle(R.string.transactions);
+        adapter = new OngoingExchangesActivityAdapter(ongoingTransactions, OngoingExchangesActivity.this);
         recyclerView.setAdapter(adapter);
 
-        getRequests();
+        getTransactions();
 
 
     }
 
 
-    private void getRequests(){
+    private void getTransactions(){
         FirebaseDatabase.getInstance().getReference()
                 .child("users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("requests")
+                .child("ongoing")
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Request requestTmp = dataSnapshot.getValue(Request.class);
-                        requests.add(0, requestTmp);
+                        OngoingTransaction requestTmp = dataSnapshot.getValue(OngoingTransaction.class);
+                        ongoingTransactions.add(0, requestTmp);
                         adapter.notifyDataSetChanged();
                         nothing.setVisibility(View.GONE);
                     }
@@ -70,10 +67,10 @@ public class RequestActivity extends AppCompatActivity {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        requests.removeIf(t->t.getRequesterUid().equals(dataSnapshot.child("requesterUid").getValue().toString())
-                                        && t.getBookIsbn().equals(dataSnapshot.child("bookIsbn").getValue().toString()));
+                        ongoingTransactions.removeIf(t->t.getRequesterUid().equals(dataSnapshot.child("requesterUid").getValue().toString())
+                                && t.getBookIsbn().equals(dataSnapshot.child("bookIsbn").getValue().toString()));
                         adapter.notifyDataSetChanged();
-                        if (requests.size() == 0){
+                        if (ongoingTransactions.size()==0){
                             nothing.setVisibility(View.VISIBLE);
                         }
                     }

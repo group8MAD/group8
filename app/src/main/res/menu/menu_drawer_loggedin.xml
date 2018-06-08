@@ -29,6 +29,10 @@
             android:title="@string/chats"
             app:actionLayout="@layout/messages_received_counter"/>
         <item
+            android:id="@+id/ongoing"
+            android:title="@string/transactions"
+            />
+        <item
             android:id="@+id/requests"
             android:title="@string/requests"
             />

@@ -1,6 +1,6 @@
 package it.polito.mad.group8;
 
-public class Request {
+public class OngoingTransaction {
 
     private String requesterUid;
     private String requesterNickname;
@@ -11,8 +11,9 @@ public class Request {
     private String endDate;
     private String city;
     private String province;
+    private String bookOwnerUid;
 
-    public Request() {
+    public OngoingTransaction(){
         requesterUid = "";
         requesterNickname = "";
         requesterImageUri = "";
@@ -22,6 +23,7 @@ public class Request {
         endDate = "";
         city = "";
         province = "";
+        bookOwnerUid = "";
     }
 
     public String getRequesterUid() {
@@ -38,6 +40,14 @@ public class Request {
 
     public void setRequesterNickname(String requesterNickname) {
         this.requesterNickname = requesterNickname;
+    }
+
+    public String getRequesterImageUri() {
+        return requesterImageUri;
+    }
+
+    public void setRequesterImageUri(String requesterImageUri) {
+        this.requesterImageUri = requesterImageUri;
     }
 
     public String getBookIsbn() {
@@ -88,17 +98,11 @@ public class Request {
         this.province = province;
     }
 
-    public String getRequesterImageUri() {
-        return requesterImageUri;
+    public String getBookOwnerUid() {
+        return bookOwnerUid;
     }
 
-    public void setRequesterImageUri(String requesterImageUri) {
-        this.requesterImageUri = requesterImageUri;
-    }
-
-    public boolean isComplete(){
-        if ( requesterUid.isEmpty() || bookIsbn.isEmpty() || startDate.isEmpty() || endDate.isEmpty())
-            return false;
-        return true;
+    public void setBookOwnerUid(String bookOwnerUid) {
+        this.bookOwnerUid = bookOwnerUid;
     }
 }

@@ -125,6 +125,11 @@ public class SearchBookActivity extends AppCompatActivity {
                         startActivity(new Intent(SearchBookActivity.this, ShareBookActivity.class));
                         return true;
 
+                    case R.id.ongoing:
+                        mDrawerLayout.closeDrawers();
+                        startActivity(new Intent(getApplicationContext(), OngoingExchangesActivity.class));
+                        return true;
+
                     case R.id.chats:
                         mDrawerLayout.closeDrawers();
                         startActivity(new Intent(getApplicationContext(), ChatList.class));

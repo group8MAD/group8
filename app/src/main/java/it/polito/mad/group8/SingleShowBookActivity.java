@@ -78,7 +78,8 @@ public class SingleShowBookActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot owner: dataSnapshot.getChildren()){
-                           owners.add(owner.getKey()+"-"+isbn);
+                            if (Objects.requireNonNull(owner.child("status").getValue()).toString().equals("available"))
+                                owners.add(owner.getKey()+"-"+isbn);
                         }
                         chatList.setAdapter(new SingleShowBookAdapter(getApplicationContext(), owners.toArray(new String[0])));
                     }

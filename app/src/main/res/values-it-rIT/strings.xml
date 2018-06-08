@@ -58,5 +58,22 @@
     <string name="no">No</string>
     <string name="reminderAccept">Sei sicuro di voler accettare questa richiesta?</string>
     <string name="reminderDecline">Sei sicuro di voler rifiutare questa richiesta?</string>
-    <string name="alreadySent">Hai già mandato una richiesta per questo libro…\n Vuoi sovrascriverla?</string>
+    <string name="alreadySent">Hai già mandato una richiesta per questo libro…\n\n Vuoi sovrascriverla?</string>
+    <string name="nothingToDisplay">Non c\'è niente da visualizzate</string>
+    <string name="wait">Attendere</string>
+    <string name="transactions">Scambi in corso/conclusi</string>
+    <string name="book">Libro</string>
+    <string name="contactUser">Contatto</string>
+    <string name="period">Periodo</string>
+    <string name="status">Status</string>
+    <string name="finishedExchange">Scambio finito</string>
+    <string name="notStartedExchange">Scambio non iniziato</string>
+    <string name="ongoingExchange">Scambio in corso</string>
+    <string name="requestNotComplete">La richiesta non è completa</string>
+    <string name="rateNow">Adesso puoi valutare l\'utente! SCHIACCIA QUI</string>
+    <string name="rate">Valuta utente</string>
+    <string name="rateTitleDescription">Titolo o riepilogo della tua recensione (obbligatorio)</string>
+    <string name="rateCommentHint">Scrivi qui la tua recensione</string>
+    <string name="sendReview">Manda Recensione?</string>
+    <string name="reviewNotComplete">La recensione non è completa!</string>
 </resources>

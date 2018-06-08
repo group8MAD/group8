@@ -170,6 +170,11 @@ public class ShareBookActivity extends AppCompatActivity {
                         startProfileActivity();
                         return true;
 
+
+                    case R.id.ongoing:
+                        mDrawerLayout.closeDrawers();
+                        startActivity(new Intent(getApplicationContext(), OngoingExchangesActivity.class));
+                        return true;
                     /*case R.id.nav_user_books:
                         finish();
                         startActivity(new Intent(ShareBookActivity.this, ShowBooks.class));
@@ -232,7 +237,6 @@ public class ShareBookActivity extends AppCompatActivity {
 
     private void setMenuCounter(int count) {
         TextView view = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
-        mNavigationView.getMenu().findItem(R.id.chats).setTitle("asd");
         view.setText(String.valueOf(count));
     }
 
@@ -360,7 +364,7 @@ public class ShareBookActivity extends AppCompatActivity {
             super.onPreExecute();
 
             pd = new ProgressDialog(ShareBookActivity.this);
-            pd.setMessage("Please wait");
+            pd.setMessage(getString(R.string.wait));
             pd.setCancelable(false);
             pd.show();
 
@@ -472,6 +476,7 @@ public class ShareBookActivity extends AppCompatActivity {
                         //adding owner and book condition if there is already a book in the database
                         //path /books/{bookISBN}/users/{userID}/condition
                         dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue(condition);
+                        dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("status").setValue("available");
                         //adding book to user in database
                         //path /users/{userID}/books/{bookISBN}/condition
                         dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
@@ -489,6 +494,7 @@ public class ShareBookActivity extends AppCompatActivity {
                         //adding owner and book condition
                         //path /books/{bookISBN}/users/{userID}/condition
                         dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue(condition);
+                        dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("status").setValue("available");
                         //adding book to user in database
                         //path /users/{userID}/books/{bookISBN}/condition
                         dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
@@ -517,6 +523,7 @@ public class ShareBookActivity extends AppCompatActivity {
         book.setPublisher("");
         book.setThumbnail("");
         book.setTitle("");
+        isbnEditTextView.setText("");
         title.setText(book.getTitle());
         authors.setText(book.getAuthors());
         year.setText(book.getEditionYear());

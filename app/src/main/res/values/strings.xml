@@ -79,6 +79,21 @@
     <string name="no">No</string>
     <string name="reminderAccept">Are you sure you want to accept this request?</string>
     <string name="reminderDecline">Are you sure you want to decline this request?</string>
-    <string name="alreadySent">You\'ve already sent a request for this book…\n Do you want to override it?</string>
-    <string name="showbooks">Show my books</string>
+    <string name="alreadySent">You\'ve already sent a request for this book…\n\n Do you want to override it?</string>
+    <string name="nothingToDisplay">There\'s nothing to display</string>
+    <string name="wait">Please wait</string>
+    <string name="transactions">Ongoing/finished exchanges</string>
+    <string name="book">Book</string>
+    <string name="contactUser">Contact</string>
+    <string name="period">Period</string>
+    <string name="finishedExchange">Transaction finished</string>
+    <string name="notStartedExchange">Transaction not started</string>
+    <string name="ongoingExchange">Ongoing transaction</string>
+    <string name="requestNotComplete">Request is not complete</string>
+    <string name="rateNow">You can now rate the user! TAP HERE</string>
+    <string name="rate">Rate User</string>
+    <string name="rateTitleDescription">Title or summary of your review (required)</string>
+    <string name="rateCommentHint">Write your review here (required)</string>
+    <string name="sendReview">Send review?</string>
+    <string name="reviewNotComplete">Review is not complete!</string>
 </resources>

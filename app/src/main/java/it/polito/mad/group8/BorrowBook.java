@@ -9,6 +9,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -37,6 +38,7 @@ public class BorrowBook extends AppCompatActivity {
     private Calendar calendarEnd;
     private Map<String, String> books;
 
+    private Long offset = (long) 60*60*24*30*1000; //30 days
     private String bookOwnerUid;
     private String currentUserUid;
     private String currentUserNickname;
@@ -58,6 +60,7 @@ public class BorrowBook extends AppCompatActivity {
         sendRequest = findViewById(R.id.sendRequest);
         calendarStart = Calendar.getInstance();
         calendarEnd = Calendar.getInstance();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //setting dates
         calendarEnd.set(calendarStart.get(Calendar.YEAR), calendarStart.get(Calendar.MONTH)+1, calendarStart.get(Calendar.DAY_OF_MONTH));
         //setting request
@@ -75,16 +78,26 @@ public class BorrowBook extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         calendarStart.set(year,month,dayOfMonth);
-                        calendarEnd.set(year,month+1,dayOfMonth);
                         startDateButton.setText(calendarStart.get(Calendar.DAY_OF_MONTH) +"/"+ String.valueOf(calendarStart.get(Calendar.MONTH)+1) +"/"+calendarStart.get(Calendar.YEAR));
                         request.setStartDate(String.valueOf(calendarStart.getTimeInMillis()));
+                        if (calendarEnd.getTimeInMillis() < calendarStart.getTimeInMillis()){
+                            calendarEnd.set(year,month,dayOfMonth);
+                            endDateButton.setText(calendarEnd.get(Calendar.DAY_OF_MONTH) +"/"+ String.valueOf(calendarEnd.get(Calendar.MONTH)+1) +"/"+calendarEnd.get(Calendar.YEAR));
+                            request.setEndDate(String.valueOf(calendarEnd.getTimeInMillis()));
+                        }else if (calendarStart.getTimeInMillis() < calendarEnd.getTimeInMillis() - offset){
+                            calendarEnd.setTimeInMillis(calendarStart.getTimeInMillis() + offset );
+                            endDateButton.setText(calendarEnd.get(Calendar.DAY_OF_MONTH) +"/"+ String.valueOf(calendarEnd.get(Calendar.MONTH)+1) +"/"+calendarEnd.get(Calendar.YEAR));
+                            request.setEndDate(String.valueOf(calendarEnd.getTimeInMillis()));
+                        }
                     }
                 },calendarStart.get(Calendar.YEAR), calendarStart.get(Calendar.MONTH), calendarStart.get(Calendar.DAY_OF_MONTH));
 
-                datePickerDialog.getDatePicker().setMinDate(calendarStart.getTimeInMillis());
+
+                datePickerDialog.getDatePicker().setMinDate(Calendar.getInstance().getTimeInMillis());
                 datePickerDialog.show();
 
             }
+
         });
 
 
@@ -94,14 +107,14 @@ public class BorrowBook extends AppCompatActivity {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(BorrowBook.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        calendarEnd.set(year,month+1,dayOfMonth);
+                        calendarEnd.set(year,month,dayOfMonth);
                         endDateButton.setText(calendarEnd.get(Calendar.DAY_OF_MONTH) +"/"+ String.valueOf(calendarEnd.get(Calendar.MONTH)+1) +"/"+calendarEnd.get(Calendar.YEAR));
                         request.setEndDate(String.valueOf(calendarEnd.getTimeInMillis()));
                     }
                 },calendarStart.get(Calendar.YEAR), calendarStart.get(Calendar.MONTH), calendarStart.get(Calendar.DAY_OF_MONTH));
 
                 datePickerDialog.getDatePicker().setMinDate(calendarStart.getTimeInMillis());
-                datePickerDialog.getDatePicker().setMaxDate(calendarEnd.getTimeInMillis());
+                datePickerDialog.getDatePicker().setMaxDate(calendarStart.getTimeInMillis() + offset);
                 datePickerDialog.show();
 
             }
@@ -142,82 +155,87 @@ public class BorrowBook extends AppCompatActivity {
         sendRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("requesterUID\t\t", request.getRequesterUid());
-                Log.e("requesterNickname\t\t", request.getRequesterNickname());
-                Log.e("bookISBN\t\t", request.getBookIsbn());
-                Log.e("bookTitle\t\t", request.getBookTitle());
-                Log.e("startDate\t\t", request.getStartDate());
-                Log.e("endDate\t\t", request.getEndDate());
+                if (request.isComplete()) {
+                    Log.e("requesterUID\t\t", request.getRequesterUid());
+                    Log.e("requesterNickname\t\t", request.getRequesterNickname());
+                    Log.e("bookISBN\t\t", request.getBookIsbn());
+                    Log.e("bookTitle\t\t", request.getBookTitle());
+                    Log.e("startDate\t\t", request.getStartDate());
+                    Log.e("endDate\t\t", request.getEndDate());
 
-                FirebaseDatabase.getInstance().getReference("users")
-                        .child(request.getRequesterUid())
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                request.setCity(dataSnapshot.child("city").getValue().toString());
-                                request.setProvince(dataSnapshot.child("province").getValue().toString());
-                                request.setRequesterImageUri(dataSnapshot.child("imageUri").getValue().toString());
-                                FirebaseDatabase.getInstance().getReference("users")
-                                        .child(bookOwnerUid)
-                                        .child("requests")
-                                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                int flag = 0;
-                                                for (DataSnapshot requestTmp: dataSnapshot.getChildren()){
-                                                    if (        Objects.requireNonNull(requestTmp.child("bookIsbn").getValue()).toString().equals(request.getBookIsbn())
-                                                            &&  Objects.requireNonNull(requestTmp.child("requesterUid").getValue()).toString().equals(request.getRequesterUid())){
+                    FirebaseDatabase.getInstance().getReference("users")
+                            .child(request.getRequesterUid())
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    request.setCity(dataSnapshot.child("city").getValue().toString());
+                                    request.setProvince(dataSnapshot.child("province").getValue().toString());
+                                    request.setRequesterImageUri(dataSnapshot.child("imageUri").getValue().toString());
+                                    FirebaseDatabase.getInstance().getReference("users")
+                                            .child(bookOwnerUid)
+                                            .child("requests")
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    int flag = 0;
+                                                    for (DataSnapshot requestTmp : dataSnapshot.getChildren()) {
+                                                        if (Objects.requireNonNull(requestTmp.child("bookIsbn").getValue()).toString().equals(request.getBookIsbn())
+                                                                && Objects.requireNonNull(requestTmp.child("requesterUid").getValue()).toString().equals(request.getRequesterUid())) {
 
-                                                        flag = 1;
-                                                        //alertDialog
-                                                        android.support.v7.app.AlertDialog.Builder alertBuilder = new android.support.v7.app.AlertDialog.Builder(BorrowBook.this);
-                                                        //setting positive button
-                                                        alertBuilder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
+                                                            flag = 1;
+                                                            //alertDialog
+                                                            android.support.v7.app.AlertDialog.Builder alertBuilder = new android.support.v7.app.AlertDialog.Builder(BorrowBook.this);
+                                                            //setting positive button
+                                                            alertBuilder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    FirebaseDatabase.getInstance().getReference("users")
+                                                                            .child(bookOwnerUid)
+                                                                            .child("requests")
+                                                                            .child(requestTmp.getKey())
+                                                                            .setValue(request);
+                                                                }
+                                                            });
+                                                            //setting positive button
+                                                            alertBuilder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
 
-                                                            }
-                                                        });
-                                                        //setting positive button
-                                                        alertBuilder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-
-                                                            }
-                                                        });
-                                                        alertBuilder.setMessage(getString(R.string.alreadySent));
-                                                        alertBuilder.show();
+                                                                }
+                                                            });
+                                                            alertBuilder.setMessage(getString(R.string.alreadySent));
+                                                            alertBuilder.show();
+                                                        }
+                                                    }
+                                                    if (flag == 0) {
+                                                        FirebaseDatabase.getInstance().getReference("users")
+                                                                .child(bookOwnerUid)
+                                                                .child("requests")
+                                                                .child(dataSnapshot.getRef().push().getKey())
+                                                                .setValue(request);
+                                                        Toast.makeText(BorrowBook.this, R.string.requestSent, Toast.LENGTH_LONG).show();
                                                     }
                                                 }
-                                                if (flag == 0){
-                                                    FirebaseDatabase.getInstance().getReference("users")
-                                                            .child(bookOwnerUid)
-                                                            .child("requests")
-                                                            .child(dataSnapshot.getRef().push().getKey())
-                                                            .setValue(request);
-                                                    Toast.makeText(BorrowBook.this,R.string.requestSent,Toast.LENGTH_LONG).show();
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
                                                 }
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-
-                                            }
-                                        });
+                                            });
 
 
-                            }
+                                }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                            }
-                        });
-
-
+                                }
+                            });
 
 
-
+                }else{
+                    Toast.makeText(getApplicationContext(),getString(R.string.requestNotComplete),Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -240,5 +258,11 @@ public class BorrowBook extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        finish();
+        return super.onOptionsItemSelected(item);
     }
 }

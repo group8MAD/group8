@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -44,20 +45,22 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.Bo
         if (!book.getThumbnail().isEmpty()){
             Picasso.get().load(book.getThumbnail()).into(holder.thumbnail);
         }
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, SingleShowBookActivity.class);
-                intent.putExtra("isbn", book.getIsbn());
-                intent.putExtra("title", holder.title.getText().toString());
-                intent.putExtra("authors", holder.authors.getText().toString());
-                intent.putExtra("publisher", holder.publisher.getText().toString());
-                intent.putExtra("year", holder.year.getText().toString());
-                intent.putExtra("url", book.getThumbnail());
+        if (FirebaseAuth.getInstance().getCurrentUser()!= null) {
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, SingleShowBookActivity.class);
+                    intent.putExtra("isbn", book.getIsbn());
+                    intent.putExtra("title", holder.title.getText().toString());
+                    intent.putExtra("authors", holder.authors.getText().toString());
+                    intent.putExtra("publisher", holder.publisher.getText().toString());
+                    intent.putExtra("year", holder.year.getText().toString());
+                    intent.putExtra("url", book.getThumbnail());
+                    context.startActivity(intent);
+                }
 
-                context.startActivity(intent);
-            }
-        });
+            });
+        }
     }
 
     @Override
