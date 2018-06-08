@@ -9,22 +9,33 @@
     android:fitsSystemWindows="true"
     tools:context=".ShowBooks">
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ShowBooks">
+        android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/listview"
-        android:layout_width="368dp"
-        android:layout_height="495dp"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp"
-        tools:ignore="MissingConstraints" />
 
-    </android.support.constraint.ConstraintLayout>
+        <ListView
+            android:id="@+id/listview"
+            android:layout_width="368dp"
+            android:layout_height="382dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="32dp"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="121dp" />
+
+        <Button
+            android:id="@+id/button_books"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="31dp"
+            android:hint="Click me to get the list of books"
+            android:text="Click to get yout list of books" />
+
+    </RelativeLayout>
 
     <android.support.design.widget.NavigationView
         app:headerLayout="@layout/drawer_header"

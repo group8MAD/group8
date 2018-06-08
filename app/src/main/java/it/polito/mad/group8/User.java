@@ -12,10 +12,8 @@ public class User {
     private String email;
     private String biography;
     private String imageUri;
-    private String direction;
     private String province;
     private String city;
-    private String cap;
 
     private String nickname;
 
@@ -26,9 +24,7 @@ public class User {
         this.email = "";
         this.biography = "";
         this.imageUri = "";
-        this.cap = "";
         this.city = "";
-        this.direction="";
         this.province="";
         int randomno = (int) (Math.random()*27839)+1;
         this.nickname ="default "+ String.valueOf(randomno);
@@ -41,11 +37,9 @@ public class User {
         this.email = email;
         this.biography = biography;
 
-        this.direction=direction;
         this.province = province;
         this.city= city;
         this.nickname = nickname;
-        this.cap=cap;
 
 
     }
@@ -92,13 +86,6 @@ public class User {
     }
 
 
-    public String getDirection() {
-        return direction;
-    }
-
-    public void setDirection(String direction) {
-        this.direction = direction;
-    }
 
     public String getProvince() {
         return province;
@@ -116,13 +103,6 @@ public class User {
         this.city = city;
     }
 
-    public String getCap() {
-        return cap;
-    }
-
-    public void setCap(String cap) {
-        this.cap = cap;
-    }
 
     public ArrayList<Book> getBooksSaved() {
         return booksSaved;
@@ -136,10 +116,10 @@ public class User {
 
     }
 
-    public String printBooksSaved(){
-        String list = "";
+    public ArrayList<String> getTitleList(){
+        ArrayList<String> list = new ArrayList<String>();
         for(Book book: booksSaved){
-            list = list.concat(book.getTitle().toString() +",");
+            list.add(book.getTitle());
         }
         return list;
     }

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +45,7 @@ public class ShowBooks extends AppCompatActivity {
 
     //The layout
     private ListView list;
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class ShowBooks extends AppCompatActivity {
 
 
         list = (ListView) findViewById(R.id.listview);
+        button = (Button) findViewById(R.id.button_books);
 
         //declare the db reference object to access the db (if not signed in, not usable)
 
@@ -133,7 +136,7 @@ public class ShowBooks extends AppCompatActivity {
             uInfo.setBooksSaved(ds.child(userID).getValue(User.class).getBookList());
 
             //show the info to see if its done correctly
-            Log.d(TAG, "showData: booklist" + uInfo.printBooksSaved());
+            Log.d(TAG, "showData: booklist" + uInfo.getTitleList());
 
             ArrayList<String> array = new ArrayList<String>();
             //bucle that puts the information of each book in an array

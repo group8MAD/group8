@@ -47,10 +47,8 @@ public class EditProfile extends AppCompatActivity {
     private EditText name;
     private EditText email;
     private EditText biography;
-    private EditText direction;
     private EditText province;
     private EditText city;
-    private EditText cap;
     private EditText nickname;
     private ImageButton image;
     private File imageCacheFile;
@@ -72,10 +70,8 @@ public class EditProfile extends AppCompatActivity {
         email = findViewById(R.id.email);
         biography = findViewById(R.id.bio);
         image = findViewById(R.id.image);
-        direction = findViewById(R.id.direction);
         city = findViewById(R.id.city);
         province = findViewById(R.id.province);
-        cap = findViewById(R.id.cap);
         nickname = findViewById(R.id.nickname);
         this.userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         databaseReference = database.getReference("users/"+this.userID);
@@ -86,10 +82,8 @@ public class EditProfile extends AppCompatActivity {
         String nameString = getIntent().getStringExtra("name");
         String emailString = getIntent().getStringExtra("email");
         String bioString = getIntent().getStringExtra("bio");
-        String directionString= getIntent().getStringExtra("direction");
         String cityString = getIntent().getStringExtra("city");
         String provinceString = getIntent().getStringExtra("province");
-        String capString = getIntent().getStringExtra("cap");
         String nicknameString = getIntent().getStringExtra("nickname");
 
         //See if the strings saved in the db are not empty, if so, show them in the profile
@@ -100,14 +94,11 @@ public class EditProfile extends AppCompatActivity {
             email.setText(emailString);
         if(bioString!=null)
             biography.setText(bioString);
-        if(directionString!=null)
-            direction.setText(directionString);
         if(cityString!=null)
             city.setText(cityString);
         if(provinceString !=null)
             province.setText(provinceString);
-        if(capString !=null)
-            cap.setText(capString);
+
         if(nicknameString != null)
             nickname.setText(nicknameString);
 
@@ -256,10 +247,8 @@ public class EditProfile extends AppCompatActivity {
         databaseReference.child("name").setValue(this.name.getText().toString());
         databaseReference.child("email").setValue(this.email.getText().toString());
         databaseReference.child("biography").setValue(this.biography.getText().toString());
-        databaseReference.child("direction").setValue(this.direction.getText().toString());
         databaseReference.child("city").setValue(this.city.getText().toString());
         databaseReference.child("province").setValue(this.province.getText().toString());
-        databaseReference.child("cap").setValue(this.cap.getText().toString());
         databaseReference.child("nickname").setValue(this.nickname.getText().toString());
         if (this.downloadUri != null)
             databaseReference.child("imageUri").setValue(this.downloadUri.toString()); //saves the url of the image in the db
