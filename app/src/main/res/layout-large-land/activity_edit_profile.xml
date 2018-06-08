@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".EditProfile"
-    android:orientation="vertical">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".EditProfile"
+        android:orientation="vertical">
+
 
     <it.polito.mad.group8.SquareImageButtonLargeLand
         android:id="@+id/image"
@@ -64,6 +70,71 @@
         android:inputType="textEmailAddress"
         android:maxLength="35"
         />
+        <TextView
+            android:id="@+id/nicknameDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/nickname"
+            android:layout_toRightOf="@id/image"
+            android:layout_above="@id/nickname"
+            />
+        <EditText
+            android:id="@+id/nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="15dp"
+            android:hint="@string/nicknameHint"
+            android:maxLines="1"
+            android:layout_centerVertical="true"
+            android:maxLength="35"
+            />
+        <TextView
+            android:id="@+id/cityDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/city"
+            android:layout_above="@id/city"
+            />
+        <EditText
+            android:id="@+id/city"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="15dp"
+            android:hint="@string/cityHint"
+            android:maxLines="1"
+            android:layout_centerVertical="true"
+            android:maxLength="35"
+            />
+
+        <TextView
+            android:id="@+id/provinceDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/province"
+            android:layout_above="@id/province"
+            />
+        <EditText
+            android:id="@+id/province"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="15dp"
+            android:hint="@string/provinceHint"
+            android:maxLines="1"
+            android:layout_centerVertical="true"
+            android:maxLength="35"
+            />
 
     <TextView
         android:id="@+id/bioDescription"
@@ -90,4 +161,5 @@
         />
 
 
-</RelativeLayout>
+    </LinearLayout>
+</ScrollView>
