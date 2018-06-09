@@ -44,6 +44,8 @@ public class SingleRequestShow extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_request_show);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.request);
+
 
         progressDialog = new ProgressDialog(SingleRequestShow.this);
         progressDialog.show();
@@ -83,6 +85,7 @@ public class SingleRequestShow extends AppCompatActivity {
             Picasso.get().load(ongoingTransaction.getRequesterImageUri()).into(imageTV);
 
         progressDialog.dismiss();
+
 
         accept.setOnClickListener(new View.OnClickListener() {
             @Override

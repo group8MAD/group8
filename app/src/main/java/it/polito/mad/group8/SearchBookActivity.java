@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -50,21 +52,22 @@ public class SearchBookActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
-
+    private TextView requestsNr;
+    private TextView chatsNr;
     // Add firebase stuff
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
     private DatabaseReference myRef;
-
+    private int chatsCounter, requestsCounter;
 
     //User...is initialized in updateUi if the user is logged in
-    private User user = new User();;
+    private User user = new User();
     private String userID;
     private DatabaseReference usersRef;
 
     List<Book> books = new ArrayList<>();
-
+    SearchBookAdapter adapter;
     // Add widgets
     RecyclerView recyclerView;
 
@@ -75,26 +78,32 @@ public class SearchBookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_book);
 
+        chatsCounter = 0;
+        requestsCounter = 0;
+
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
         mDrawerLayout.addDrawerListener(mToggle);
 
         recyclerView = findViewById(R.id.recyclerView);
 
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.search_books);
+
         updateUi(FirebaseAuth.getInstance().getCurrentUser());
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             //Adding listener on messageCounter
             FirebaseDatabase.getInstance().getReference("users")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child("chats")
                     .addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            int counter = 0;
-                            for (DataSnapshot chat : dataSnapshot.getChildren()) {
-                                counter += Integer.parseInt(chat.child("notRead").getValue().toString());
+                            chatsCounter = 0;
+                            requestsCounter = 0;
+                            for (DataSnapshot chat : dataSnapshot.child("chats").getChildren()) {
+                                chatsCounter += Integer.parseInt(chat.child("notRead").getValue().toString());
                             }
-                            setMenuCounter(counter);
+                            requestsCounter =(int) dataSnapshot.child("requests").getChildrenCount();
+                            setMenuCounter();
 
                         }
 
@@ -115,9 +124,9 @@ public class SearchBookActivity extends AppCompatActivity {
                         startActivity(new Intent(SearchBookActivity.this, ShowProfile.class));
                         return true;
 
-                    case R.id.nav_user_books:
+                    case R.id.nav_show_books:
                         mDrawerLayout.closeDrawers();
-                        startActivity(new Intent(SearchBookActivity.this, ShowBooks.class));
+                        startActivity(new Intent(SearchBookActivity.this, ShowUserBooksActivity.class));
                         return true;
 
                     case R.id.nav_share_books_logged:
@@ -161,25 +170,31 @@ public class SearchBookActivity extends AppCompatActivity {
 
         // Assignment of a Layout Manager, in this case, Liner Layout
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        adapter = new SearchBookAdapter(books, SearchBookActivity.this);
+        recyclerView.setAdapter(adapter);
         getBooks();
 
 
 
     }
+
+
+    private void setMenuCounter() {
+        chatsNr.setText(String.valueOf(chatsCounter));
+        requestsNr.setText(String.valueOf(requestsCounter));
+    }
+
     //This is useful for when you're not logged in and you log in
     //if you don't updateUi onResume lateral menu won't change
     @Override
     protected void onResume() {
         super.onResume();
         updateUi(FirebaseAuth.getInstance().getCurrentUser());
-
+        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+            setMenuCounter();
     }
 
-    private void setMenuCounter(int count) {
-        TextView view = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
-        view.setText(String.valueOf(count));
-    }
+
 
     public void signOut(){
         mDrawerLayout.closeDrawers();
@@ -267,6 +282,8 @@ public class SearchBookActivity extends AppCompatActivity {
             this.userID = currentUser.getUid();
             mNavigationView.getMenu().clear();
             mNavigationView.inflateMenu(R.menu.menu_drawer_loggedin);
+            requestsNr = (TextView) mNavigationView.getMenu().findItem(R.id.requests).getActionView();
+            chatsNr = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
             usersRef = database.getReference("users/"+this.userID);
             usersRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -289,7 +306,9 @@ public class SearchBookActivity extends AppCompatActivity {
     //Getting user data to be shown in the header
     private void getData(DataSnapshot dataSnapshot){
         if(!dataSnapshot.exists()){
-            usersRef.setValue(this.user);
+            user.setName(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName());
+            user.setEmail(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail());
+            dataSnapshot.getRef().setValue(user);
         }else{
             this.user.setName(dataSnapshot.getValue(User.class).getName());
             this.user.setEmail(dataSnapshot.getValue(User.class).getEmail());
@@ -310,28 +329,42 @@ public class SearchBookActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getBooks(){
+        FirebaseDatabase.getInstance()
+                .getReference("books")
+                .orderByChild("title")
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Book book = dataSnapshot.getValue(Book.class);
+                        assert book != null;
+                        book.setIsbn(dataSnapshot.getKey());
+                        Log.e("SingleBookTitle", book.getTitle());
+                        if (!books.contains(book))
+                            books.add(book);
+                        adapter.notifyDataSetChanged();
+                    }
 
-             FirebaseDatabase.getInstance()
-                     .getReference("books")
-                     .orderByChild("title")
-                     .addListenerForSingleValueEvent(new ValueEventListener() {
-                         @Override
-                         public void onDataChange(DataSnapshot dataSnapshot) {
-                             for (DataSnapshot bookTmp : dataSnapshot.getChildren()){
-                                     Book book = bookTmp.getValue(Book.class);
-                                 assert book != null;
-                                 book.setIsbn(bookTmp.getKey());
-                                     Log.e("SingleBookTitle", book.getTitle());
-                                     books.add(book);
-                                 }
-                             SearchBookAdapter adapter = new SearchBookAdapter(books, SearchBookActivity.this);
-                             recyclerView.setAdapter(adapter);
-                             }
-                         @Override
-                         public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                         }
-                     });
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        books.removeIf(b->b.getIsbn().equals(dataSnapshot.getKey()));
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
 

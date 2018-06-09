@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.os.PersistableBundle;
 import android.provider.ContactsContract;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +36,7 @@ public class BorrowBook extends AppCompatActivity {
     private Button startDateButton;
     private Button endDateButton;
     private Button sendRequest;
+    private TextView contactNicknameTV;
     private Calendar calendarStart;
     private Calendar calendarEnd;
     private Map<String, String> books;
@@ -54,6 +57,7 @@ public class BorrowBook extends AppCompatActivity {
         currentUserNickname = getIntent().getStringExtra("currentUserNickname");
         books = new HashMap<>();
         //getting View
+        contactNicknameTV = findViewById(R.id.contactNickname);
         chooseBookButton = findViewById(R.id.chooseBook);
         endDateButton = findViewById(R.id.endDateButton);
         startDateButton = findViewById(R.id.startDateButton);
@@ -61,6 +65,7 @@ public class BorrowBook extends AppCompatActivity {
         calendarStart = Calendar.getInstance();
         calendarEnd = Calendar.getInstance();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.borrow);
         //setting dates
         calendarEnd.set(calendarStart.get(Calendar.YEAR), calendarStart.get(Calendar.MONTH)+1, calendarStart.get(Calendar.DAY_OF_MONTH));
         //setting request
@@ -68,7 +73,20 @@ public class BorrowBook extends AppCompatActivity {
         request.setRequesterUid(currentUserUid);
         request.setRequesterNickname(currentUserNickname);
 
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(bookOwnerUid)
+                .child("nickname")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        contactNicknameTV.setText(getString(R.string.zzz)+" "+ dataSnapshot.getValue().toString());
+                    }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
         Log.e("\t\tBorrowBook\t\t\t\t", bookOwnerUid);
 
         startDateButton.setOnClickListener(new View.OnClickListener() {
@@ -265,4 +283,5 @@ public class BorrowBook extends AppCompatActivity {
         finish();
         return super.onOptionsItemSelected(item);
     }
+
 }

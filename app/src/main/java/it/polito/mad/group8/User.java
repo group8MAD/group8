@@ -105,33 +105,6 @@ public class User {
     }
 
 
-    public ArrayList<Book> getBooksSaved() {
-        return booksSaved;
-    }
 
-    public void setBooksSaved(ArrayList<Book> booksSaved) {
-
-        for(Book book : booksSaved){
-            this.booksSaved.add(book);
-        }
-
-    }
-
-    public ArrayList<String> getTitleList(){
-        ArrayList<String> list = new ArrayList<String>();
-        for(Book book: booksSaved){
-            list.add(book.getTitle());
-        }
-        return list;
-    }
-
-    public ArrayList<Book> getBookList(){
-        ArrayList<Book> list = new ArrayList<Book>();
-        if(booksSaved !=null)
-        for(Book book : booksSaved){
-            list.add(book);
-        }
-        return list;
-    }
 
 }

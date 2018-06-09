@@ -65,7 +65,8 @@ public class SingleShowBookActivity extends AppCompatActivity {
         publisher.setText(getIntent().getStringExtra("publisher"));
         year.setText(getIntent().getStringExtra("year"));
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(title.getText().toString());
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         String imageUrl = getIntent().getStringExtra("url");
         Log.e("imageuri: ", imageUrl);

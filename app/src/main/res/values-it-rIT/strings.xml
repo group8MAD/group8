@@ -37,7 +37,7 @@
     <string name="contact">Contatta utente</string>
     <string name="getReview">Leggi recensioni</string>
     <string name="writeReview">Scrivi una recensione</string>
-    <string name="borrow">Chiedi in prestito un libro</string>
+    <string name="borrow">Chiedi un libro</string>
     <string name="userProfile">Profilo Utente</string>
     <string name="userBorrow">Stay prendendo un libro in prestito da: </string>
     <string name="startingDate">Data Iniziale</string>
@@ -59,7 +59,7 @@
     <string name="reminderAccept">Sei sicuro di voler accettare questa richiesta?</string>
     <string name="reminderDecline">Sei sicuro di voler rifiutare questa richiesta?</string>
     <string name="alreadySent">Hai già mandato una richiesta per questo libro…\n\n Vuoi sovrascriverla?</string>
-    <string name="nothingToDisplay">Non c\'è niente da visualizzate</string>
+    <string name="nothingToDisplay">Non c\'è niente da visualizzare</string>
     <string name="wait">Attendere</string>
     <string name="transactions">Scambi in corso/conclusi</string>
     <string name="book">Libro</string>
@@ -76,5 +76,16 @@
     <string name="rateCommentHint">Scrivi qui la tua recensione</string>
     <string name="sendReview">Manda Recensione?</string>
     <string name="reviewNotComplete">La recensione non è completa!</string>
-    <string name="showbooks">Mostra i miei libri</string>
+    <string name="profileDescription">Il tuo vero nome e la tua email non saranno mostrati finchè non accetti una richiesta di scambio</string>
+    <string name="chatList">Lista Chat</string>
+    <string name="search_books">Cerca Libro</string>
+    <string name="reviews">Recensioni</string>
+    <string name="bookUploadOk">Libro condiviso con successo!</string>
+    <string name="showbooks">I miei libri</string>
+    <string name="request">Richiesta</string>
+    <string name="deleteBook">Cancella Libro</string>
+    <string name="confirmDelete">Sei sicuro di voler cancellare questo libro?\n</string>
+    <string name="zzz">Stai chiedendo in prestito un libro a:  </string>
+    <string name="loaned">PRESO IN PRESTITO</string>
+    <string name="lent">PRESTATO</string>
 </resources>

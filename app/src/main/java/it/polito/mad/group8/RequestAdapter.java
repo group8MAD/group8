@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
 
 public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestHolder>{
 
     private List<Request> requests;
     private Context context;
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     public RequestAdapter(List<Request> requests, Context context) {
         this.requests = requests;
@@ -44,7 +48,27 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
 
 
         //setting
-        holder.title.setText(request.getRequesterNickname());
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(request.getRequesterUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        holder.email.setText(Objects.requireNonNull(dataSnapshot.child("email").getValue()).toString());
+                        String contact = dataSnapshot.child("name").getValue().toString() + " ("+ request.getRequesterNickname()+") ";
+                        holder.contact.setText(contact);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+        holder.bookTitle.setText(request.getBookTitle());
+
+        String periodHTML = context.getString(R.string.period)+": "+context.getString(R.string.from)+" <b>"
+                +formatter.format(Long.parseLong(request.getStartDate()))+"</b> "
+                + context.getString(R.string.to)+" <b>"+formatter.format(Long.parseLong(request.getEndDate()))+"</b>";
+        holder.period.setText(Html.fromHtml(periodHTML));
         if (!request.getRequesterImageUri().isEmpty())
             Picasso.get().load(request.getRequesterImageUri()).into(holder.thumbnail);
 
@@ -73,16 +97,23 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
 
     public class RequestHolder extends RecyclerView.ViewHolder {
 
-        public TextView title;
         public ImageView thumbnail;
         public ConstraintLayout layout;
+        public TextView bookTitle;
+        public TextView contact;
+        public TextView period;
+        public TextView email;
+
 
 
         public RequestHolder(View itemView){
             super(itemView);
-            title = itemView.findViewById(R.id.nickname);
+            bookTitle = itemView.findViewById(R.id.bookTitle);
             thumbnail = itemView.findViewById(R.id.image);
+            contact = itemView.findViewById(R.id.contact);
+            period = itemView.findViewById(R.id.period);
             layout = itemView.findViewById(R.id.layout);
+            email = itemView.findViewById(R.id.email);
         }
     }
 

@@ -11,8 +11,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
@@ -27,6 +29,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 
+import java.util.Objects;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ShowProfile extends AppCompatActivity {
@@ -35,22 +39,19 @@ public class ShowProfile extends AppCompatActivity {
 
     public static final String PROFILE_PICTURE = "ProfilePicture";
 
-    private EditText name;
-    private EditText email;
-    private EditText biography;
+    private TextView name;
+    private TextView email;
+    private TextView biography;
     private ImageView image;
-    private EditText province;
-    private EditText city;
-    private EditText nickname;
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mToggle;
-    private NavigationView mNavigationView;
+    private TextView cityProvince;
+    private TextView nickname;
+    private RatingBar ratingBar;
     private User user;
     private String userID;
     private Uri imageUri;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference ref;
-
+    private Button readReviews;
 
 
     @Override
@@ -61,59 +62,16 @@ public class ShowProfile extends AppCompatActivity {
         image = findViewById(R.id.image);
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
-        biography = findViewById(R.id.bio);
-        city = findViewById(R.id.city);
-        province = findViewById(R.id.province);
+        biography = findViewById(R.id.biography);
         nickname = findViewById(R.id.nickname);
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mNavigationView = findViewById(R.id.nav_view);
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout,R.string.open,R.string.close);
+        readReviews = findViewById(R.id.readReviews);
+        cityProvince = findViewById(R.id.cityProvince);
+        ratingBar = findViewById(R.id.ratingBar);
+
         user = new User();
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        getSupportActionBar().setTitle(R.string.profile);
 
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                switch (item.getItemId()){
-                    case R.id.nav_profile:
-                        mDrawerLayout.closeDrawers();
-                        return true;
-
-                    /*case R.id.nav_show_books:
-                        finish();
-                        startActivity(new Intent(ShowProfile.this, ShowBooks.class));
-                        return true;*/
-
-                    case R.id.nav_share_books_logged:
-                        finish();
-                        startActivity(new Intent(ShowProfile.this, ShareBookActivity.class));
-                        return true;
-
-                    case R.id.chats:
-                        finish();
-                        startActivity(new Intent(getApplicationContext(), ChatList.class));
-                        return true;
-
-                    case R.id.nav_search_books:
-                        startActivity(new Intent(ShowProfile.this, SearchBookActivity.class));
-                        return true;
-
-                    case R.id.requests:
-                        mDrawerLayout.closeDrawers();
-                        startActivity(new Intent(getApplicationContext(), RequestActivity.class));
-                        return true;
-
-                    case R.id.logout:
-                        signOut();
-                        return true;
-
-                    default:
-                        mDrawerLayout.closeDrawers();
-                }
-                return true;
-            }
-        });
 
         ref = database.getReference("users/"+this.userID);
         ref.addValueEventListener(new ValueEventListener() {
@@ -127,28 +85,32 @@ public class ShowProfile extends AppCompatActivity {
 
             }
         });
+
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(userID)
+                .child("reviews")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        float rating = 0;
+                        for (DataSnapshot review: dataSnapshot.getChildren()){
+                            rating += Float.parseFloat(review.child("rating").getValue().toString());
+                        }
+                        ratingBar.setRating(rating / dataSnapshot.getChildrenCount());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
-    public void setHeaderDrawer(){
-        View headerView = mNavigationView.getHeaderView(0);
-        TextView name = headerView.findViewById(R.id.header_name);
-        TextView email = headerView.findViewById(R.id.header_email);
-        CircleImageView image = headerView.findViewById(R.id.header_image);
-
-        name.setText(this.name.getText().toString());
-        email.setText(this.email.getText().toString());
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        mDrawerLayout.addDrawerListener(mToggle);
-        mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
         getMenuInflater().inflate(R.menu.menu_show_profile, menu);
-        mNavigationView.inflateMenu(R.menu.menu_drawer_loggedin);
         return true;
     }
 
@@ -157,37 +119,30 @@ public class ShowProfile extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.edit_icon:
                 Intent intent = new Intent(this, EditProfile.class);
-                intent.putExtra("name", name.getText().toString());
-                intent.putExtra("email", email.getText().toString());
-                intent.putExtra("bio", biography.getText().toString());
-                intent.putExtra("city", city.getText().toString());
-                intent.putExtra("province", province.getText().toString());
-                intent.putExtra("nickname", nickname.getText().toString());
+                intent.putExtra("name", user.getName());
+                intent.putExtra("email", user.getEmail());
+                intent.putExtra("bio", user.getBiography());
+                intent.putExtra("city", user.getCity());
+                intent.putExtra("province", user.getProvince());
+                intent.putExtra("nickname", user.getNickname());
                 startActivity(intent);
-                return true;
+                return super.onOptionsItemSelected(item);
+            default:
+                finish();
+                return super.onOptionsItemSelected(item);
+
         }
-        if (mToggle.onOptionsItemSelected(item)){
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
 
-    public void signOut(){
-        mDrawerLayout.closeDrawers();
-        AuthUI.getInstance()
-                .signOut(ShowProfile.this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        finish();
-                        startActivity(new Intent(ShowProfile.this, SearchBookActivity.class));
-                    }
-                });
-    }
 
     private void getData(DataSnapshot dataSnapshot){
         if(!dataSnapshot.exists()){
+            user.setName(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName());
+            user.setEmail(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail());
             ref.setValue(this.user);
+
+
         }else{
             this.user.setName(dataSnapshot.getValue(User.class).getName());
             this.user.setEmail(dataSnapshot.getValue(User.class).getEmail());
@@ -198,16 +153,24 @@ public class ShowProfile extends AppCompatActivity {
             this.name.setText(user.getName());
             this.email.setText(user.getEmail());
             this.biography.setText(user.getBiography());
-            this.city.setText(user.getCity());
-            this.province.setText(user.getProvince());
+            String cityProvinceString = user.getCity()+" ( "+user.getProvince()+" )";
+            cityProvince.setText(cityProvinceString);
+
             this.nickname.setText(user.getNickname());
 
             //check if imageUrl is empty
             //if it is don't load it because this will make the app crash
             if(!dataSnapshot.getValue(User.class).getImageUri().isEmpty())
                 Picasso.get().load(dataSnapshot.getValue(User.class).getImageUri()).into(image);
+            readReviews.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), ShowReviewsActivity.class);
+                    intent.putExtra("user", dataSnapshot.getKey());
+                    startActivity(intent);
+                }
+            });
 
-            setHeaderDrawer();
         }
     }
 

@@ -39,6 +39,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class EditProfile extends AppCompatActivity {
     public static final int REQUEST_PERMISSIONS = 200;
@@ -76,6 +77,8 @@ public class EditProfile extends AppCompatActivity {
         this.userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         databaseReference = database.getReference("users/"+this.userID);
         storageReference = storage.getReference();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         filepath = storageReference.child("Photos").child(userID.toString());  //path of the image in the db creates a folder Photos/userUID
 
@@ -211,6 +214,8 @@ public class EditProfile extends AppCompatActivity {
             File imageFileTmp = new File(getFilesDir(),"ProfilePictureTmp");
             if(imageCacheFile.renameTo(imageFileTmp))
                 outState.putString("imageSaved","YES");
+        }if (downloadUri!=null && !downloadUri.toString().isEmpty()){
+            outState.putString("uri", downloadUri.toString());
         }
     }
 
@@ -223,21 +228,26 @@ public class EditProfile extends AppCompatActivity {
                 image.setImageURI(Uri.fromFile(imageCacheFile));
 
              }
+             if (savedInstanceState.getString("uri") != null && !Objects.requireNonNull(savedInstanceState.getString("uri")).isEmpty()){
+                downloadUri = Uri.parse(savedInstanceState.getString("uri").toString());
+             }
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent(this, ShowProfile.class);
+        if (item.getItemId() != android.R.id.home){
+            Intent intent = new Intent(this, ShowProfile.class);
 
-        updateDatabaseProfile();
+            updateDatabaseProfile();
 
-        if (imageCacheFile!=null ){
-            File fileDest = new File(getFilesDir(), PROFILE_PICTURE);
-            if (imageCacheFile.renameTo(fileDest)) {
+            if (imageCacheFile!=null ){
+                File fileDest = new File(getFilesDir(), PROFILE_PICTURE);
+                if (imageCacheFile.renameTo(fileDest)) {
                 intent.putExtra("imageUri", "OK");
-            }
+                }
 
+            }
         }
         finish();
         return true;

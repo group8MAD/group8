@@ -43,6 +43,7 @@ public class RateUserActivity extends AppCompatActivity {
         review = new Review();
         review.setReviewerUid(getIntent().getStringExtra("currentUserUid"));
         review.setReviewerNickname(getIntent().getStringExtra("currentUserNickname"));
+        review.setReviewerImageUri(getIntent().getStringExtra("currentUserImageUri"));
 
         rateBT.setOnClickListener(new View.OnClickListener() {
             @Override

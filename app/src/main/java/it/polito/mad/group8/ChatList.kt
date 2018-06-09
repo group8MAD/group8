@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 
@@ -32,18 +33,6 @@ import java.util.ArrayList
 class ChatList : AppCompatActivity() {
     val SIGN_IN = 1000
 
-    // Add Layout and Navigation menu
-    private var mDrawerLayout: DrawerLayout? = null
-    private var mToggle: ActionBarDrawerToggle? = null
-    private var mNavigationView: NavigationView? = null
-
-    // Add firebase stuff
-    private val database = FirebaseDatabase.getInstance()
-    private val auth: FirebaseAuth? = null
-    private val authListener: FirebaseAuth.AuthStateListener? = null
-    private val myRef: DatabaseReference? = null
-
-
     //User...is initialized in updateUi if the user is logged in
     private val user = User()
     private var userID: String? = null
@@ -51,6 +40,7 @@ class ChatList : AppCompatActivity() {
 
     // Add widgets
     internal lateinit var recyclerView: RecyclerView
+    internal lateinit var nothing: TextView
     private var chatListAdaptor: ChatListAdaptor? = null
     internal var chats: MutableList<Chat> = ArrayList()
 
@@ -59,121 +49,25 @@ class ChatList : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_list)
 
-        mDrawerLayout = findViewById(R.id.drawer_layout)
-        mNavigationView = findViewById(R.id.nav_view)
 
+        nothing = findViewById(R.id.nothing)
         recyclerView = findViewById(R.id.recyclerView)
         chatListAdaptor = ChatListAdaptor(applicationContext, chats)
         recyclerView.layoutManager = LinearLayoutManager(this) // Assignment of a Layout Manager, in this case, Liner Layout
         recyclerView.adapter = chatListAdaptor
 
-        updateUi(FirebaseAuth.getInstance().currentUser)
-
-        // Creation of the lateral menu
-        mNavigationView!!.setNavigationItemSelectedListener(NavigationView.OnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_profile -> {
-                    finish()
-                    startActivity(Intent(this@ChatList, ShowProfile::class.java))
-                    return@OnNavigationItemSelectedListener true
-                }
-
-            /*case R.id.nav_user_books:
-                        finish();
-                        startActivity(new Intent(SearchBookActivity.this, ShowBooks.class));
-                        return true;*/
-
-                R.id.nav_share_books_logged -> {
-                    mDrawerLayout?.closeDrawers()
-                    startActivity(Intent(this@ChatList, ShareBookActivity::class.java))
-                    return@OnNavigationItemSelectedListener true
-                }
-
-                R.id.chats -> {
-                    mDrawerLayout?.closeDrawers()
-                    return@OnNavigationItemSelectedListener true
-                }
-
-                R.id.nav_search_books -> {
-                    mDrawerLayout?.closeDrawers()
-                    startActivity(Intent(this@ChatList, SearchBookActivity::class.java))
-                    return@OnNavigationItemSelectedListener true
-                }
-
-                R.id.logout -> {
-                    signOut()
-                    return@OnNavigationItemSelectedListener true
-                }
-
-                R.id.sign -> {
-                    signIn()
-                    return@OnNavigationItemSelectedListener true
-                }
-
-                else -> mDrawerLayout?.closeDrawers()
-            }
-            true
-        })
-
+        supportActionBar?.title = getString(R.string.chatList)
         getChats()
 
     }
 
-    //This is useful for when you're not logged in and you log in
-    //if you don't updateUi onResume lateral menu won't change
-    override fun onResume() {
-        super.onResume()
-        updateUi(FirebaseAuth.getInstance().currentUser)
-        FirebaseDatabase.getInstance().getReference("users")
-                .child(FirebaseAuth.getInstance().currentUser!!.uid)
-                .child("chats")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        var counter = 0
-                        for (chat in dataSnapshot.children) {
-                            counter += Integer.parseInt(chat.child("notRead").value!!.toString())
-                        }
-                        setMenuCounter(counter)
 
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-
-                    }
-                })
-    }
-
-    private fun setMenuCounter(count: Int) {
-        val view = mNavigationView?.getMenu()?.findItem(R.id.chats)?.actionView as TextView
-        view.text = count.toString()
-    }
-
-    fun signOut() {
-        mDrawerLayout!!.closeDrawers()
-        AuthUI.getInstance()
-                .signOut(this@ChatList)
-                .addOnCompleteListener { updateUi(FirebaseAuth.getInstance().currentUser) }
-    }
-
-    fun signIn() {
-        mDrawerLayout!!.closeDrawers()
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setIsSmartLockEnabled(false)
-                        .build(),
-                SIGN_IN)
-
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
             if (result.contents == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
-            } else if (requestCode == SIGN_IN) {
-                // Update the UI if receive the corresponding parameter SIGN_IN from startActivityForResult
-                updateUi(FirebaseAuth.getInstance().currentUser)
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
@@ -183,43 +77,17 @@ class ChatList : AppCompatActivity() {
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        mToggle = ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close)
-        mToggle!!.syncState()
+
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        return if (mToggle!!.onOptionsItemSelected(item)) {
-            true
-        } else super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        finish()
+        return super.onOptionsItemSelected(item)
     }
 
     //Update the interface in case of signing in or out
-    fun updateUi(currentUser: FirebaseUser?) {
-        if (currentUser != null) {
-            this.userID = currentUser.uid
-            mNavigationView!!.menu.clear()
-            mNavigationView!!.inflateMenu(R.menu.menu_drawer_loggedin)
-            usersRef = database.getReference("users/" + this.userID!!)
-            usersRef!!.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    getData(dataSnapshot)
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-
-                }
-            })
-
-        } else {
-            finish()
-            startActivity(Intent(this@ChatList, SearchBookActivity::class.java))
-            mNavigationView!!.menu.clear()
-            mNavigationView!!.inflateMenu(R.menu.menu_drawer_not_loggedin)
-        }
-    }
 
     //Getting user data to be shown in the header
     private fun getData(dataSnapshot: DataSnapshot) {
@@ -231,15 +99,7 @@ class ChatList : AppCompatActivity() {
             this.user.biography = dataSnapshot.getValue(User::class.java)!!.biography
             this.user.nickname = dataSnapshot.getValue(User::class.java)!!.nickname
             /*TODO The field Biography is not include in the file drawer_header.xml*/
-
-            setHeaderDrawer()
         }
-    }
-
-    fun setHeaderDrawer() {
-        val headerView = mNavigationView!!.getHeaderView(0)
-
-        val image = headerView.findViewById<CircleImageView>(R.id.header_image)
     }
 
 
@@ -262,7 +122,7 @@ class ChatList : AppCompatActivity() {
                             chats.removeIf({t -> t.chatName == p0.key})
                             chat?.let { chats.add(0, it) }
                             chatListAdaptor?.notifyDataSetChanged()
-
+                            nothing.visibility = View.GONE
                         }
                     }
 
@@ -273,7 +133,7 @@ class ChatList : AppCompatActivity() {
 
                             chat?.let { chats.add(0, it) }
                             chatListAdaptor?.notifyDataSetChanged()
-
+                            nothing.visibility = View.GONE
 
                         }
                     }

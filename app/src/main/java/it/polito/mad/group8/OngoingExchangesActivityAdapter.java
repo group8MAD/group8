@@ -64,12 +64,12 @@ public class OngoingExchangesActivityAdapter extends RecyclerView.Adapter<Ongoin
         if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(transaction.getRequesterUid())) {
             FirebaseDatabase.getInstance().getReference("users")
                     .child(transaction.getBookOwnerUid())
-                    .child("nickname")
                     .addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            String contactHTML = context.getString(R.string.contactUser)+": <b>"+dataSnapshot.getValue().toString()+"</b>";
+                            String contactHTML = context.getString(R.string.contactUser)+": <b>"+dataSnapshot.child("name").getValue().toString()+" ( "+dataSnapshot.child("nickname").getValue().toString()+" ) "+"</b>";
                             holder.contact.setText(Html.fromHtml(contactHTML));
+                            holder.email.setText(dataSnapshot.child("email").getValue().toString());
                         }
 
                         @Override
@@ -77,13 +77,26 @@ public class OngoingExchangesActivityAdapter extends RecyclerView.Adapter<Ongoin
 
                         }
                     });
-            holder.borrow.setText("loaned");
+            holder.borrow.setText(context.getString(R.string.loaned));
             holder.borrow.setTextColor(Color.GREEN);
         }
         else {
-            String contactHTML = context.getString(R.string.contactUser)+": <b>"+transaction.getRequesterNickname()+"</b>";
-            holder.contact.setText(Html.fromHtml(contactHTML));
-            holder.borrow.setText("lent");
+            FirebaseDatabase.getInstance().getReference("users")
+                    .child(transaction.getRequesterUid())
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String contactHTML = context.getString(R.string.contactUser)+": <b>"+dataSnapshot.child("name").getValue().toString()+" ( "+dataSnapshot.child("nickname").getValue().toString()+" ) "+"</b>";
+                            holder.contact.setText(Html.fromHtml(contactHTML));
+                            holder.email.setText("Email: "+dataSnapshot.child("email").getValue().toString());
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+            holder.borrow.setText(context.getString(R.string.lent));
             holder.borrow.setTextColor(Color.RED);
         }
         String periodHTML = context.getString(R.string.period)+": "+context.getString(R.string.from)+" <b>"+formatter.format(Long.parseLong(transaction.getStartDate()))+"</b> "
@@ -93,17 +106,13 @@ public class OngoingExchangesActivityAdapter extends RecyclerView.Adapter<Ongoin
 
         if (calendarStart.get(Calendar.YEAR) > currentDate.get(Calendar.YEAR) || calendarStart.get(Calendar.DAY_OF_YEAR) >= currentDate.get(Calendar.DAY_OF_YEAR)){
             String statusHYML = context.getString(R.string.notStartedExchange);
-            holder.status.setText(statusHYML);
-            holder.status.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+
         }else if ( (currentDate.get(Calendar.DAY_OF_YEAR) <= calendarEnd.get(Calendar.DAY_OF_YEAR) || currentDate.get(Calendar.YEAR) < calendarEnd.get(Calendar.YEAR)) &&
                    (currentDate.get(Calendar.DAY_OF_YEAR) >= calendarStart.get(Calendar.DAY_OF_YEAR) || currentDate.get(Calendar.YEAR) > calendarStart.get(Calendar.YEAR))){
             String statusHYML = context.getString(R.string.ongoingExchange);
-            holder.status.setText(statusHYML);
-            holder.status.setTextColor(Color.GREEN);
+
         }else{
-            String statusHYML = context.getString(R.string.finishedExchange);
-            holder.status.setText(statusHYML);
-            holder.status.setTextColor(Color.RED);
+
             holder.rate.setVisibility(View.VISIBLE);
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -136,20 +145,21 @@ public class OngoingExchangesActivityAdapter extends RecyclerView.Adapter<Ongoin
         public CardView cardView;
         public TextView book;
         public TextView contact;
-        public TextView status;
         public TextView borrow;
         public TextView period;
         public TextView rate;
+        public TextView email;
+
 
         public Holder(View itemView){
             super(itemView);
             cardView = itemView.findViewById(R.id.cardViewID);
             book = itemView.findViewById(R.id.book);
             contact = itemView.findViewById(R.id.contact);
-            status = itemView.findViewById(R.id.status);
             borrow = itemView.findViewById(R.id.borrow);
             period = itemView.findViewById(R.id.period);
             rate = itemView.findViewById(R.id.rate);
+            email = itemView.findViewById(R.id.email);
         }
     }
 

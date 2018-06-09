@@ -3,6 +3,7 @@ package it.polito.mad.group8;
 public class Review {
     private String reviewerUid;
     private String reviewerNickname;
+    private String reviewerImageUri;
     private String title;
     private String comment;
     private float rating;
@@ -10,6 +11,7 @@ public class Review {
     public Review(){
         reviewerUid = "";
         reviewerNickname = "";
+        reviewerImageUri = "";
         title = "";
         comment = "";
         rating = 0;
@@ -53,5 +55,13 @@ public class Review {
 
     public void setRating(float rating) {
         this.rating = rating;
+    }
+
+    public String getReviewerImageUri() {
+        return reviewerImageUri;
+    }
+
+    public void setReviewerImageUri(String reviewerImageUri) {
+        this.reviewerImageUri = reviewerImageUri;
     }
 }

@@ -36,7 +36,6 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
             tools:replace="screenOrientation" />
-        <activity android:name=".ShowBooks" />
         <activity android:name=".ShareBookActivity" />
         <activity android:name=".SingleShowBookActivity" />
         <activity android:name=".ChatList" />
@@ -46,7 +45,10 @@
         <activity android:name=".RequestActivity" />
         <activity android:name=".SingleRequestShow" />
         <activity android:name=".OngoingExchangesActivity" />
-        <activity android:name=".RateUserActivity"></activity>
+        <activity android:name=".RateUserActivity" />
+        <activity android:name=".ShowReviewsActivity" />
+        <activity android:name=".ShowUserBooksActivity" />
+        <activity android:name=".DeleteBook"></activity>
     </application>
 
 </manifest>

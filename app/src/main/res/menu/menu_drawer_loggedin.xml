@@ -23,14 +23,19 @@
             android:id="@+id/chats"
             android:icon="@drawable/fui_ic_mail_white_24dp"
             android:title="@string/chats"
-            app:actionLayout="@layout/messages_received_counter"/>
+            app:actionLayout="@layout/messages_received_counter"
+            app:showAsAction="always"/>
         <item
             android:id="@+id/ongoing"
+            android:icon="@drawable/ic_baseline_schedule_24px"
             android:title="@string/transactions"
             />
         <item
+            app:actionLayout="@layout/messages_received_counter"
             android:id="@+id/requests"
+            android:icon="@drawable/ic_baseline_person_add_24px"
             android:title="@string/requests"
+            app:showAsAction="always"
             />
         <item
             android:id="@+id/logout"

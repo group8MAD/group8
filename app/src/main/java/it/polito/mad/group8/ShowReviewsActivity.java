@@ -1,64 +1,55 @@
 package it.polito.mad.group8;
 
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class RequestActivity extends AppCompatActivity {
-
+public class ShowReviewsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private RequestAdapter adapter;
-    private List<Request> requests;
     private TextView nothing;
+    private List<Review> reviews;
+    private ShowReviewsActivityAdapter adapter;
+    private String user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_request);
+        setContentView(R.layout.activity_show_reviews);
 
-        requests = new ArrayList<>();
-
-        nothing = findViewById(R.id.nothing);
-        recyclerView = findViewById(R.id.recyclerView_requests_list);
+        user = getIntent().getStringExtra("user");
+        //getting view
+        recyclerView = findViewById(R.id.recyclerView_reviews_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        adapter = new RequestAdapter(requests, RequestActivity.this);
+        nothing = findViewById(R.id.nothing);
+
+        reviews = new ArrayList<>();
+        adapter = new ShowReviewsActivityAdapter(reviews, this);
         recyclerView.setAdapter(adapter);
 
-        getSupportActionBar().setTitle(R.string.requests);
-        getRequests();
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.reviews);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-
-    }
-
-
-    private void getRequests(){
-        FirebaseDatabase.getInstance().getReference()
-                .child("users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("requests")
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(user)
+                .child("reviews")
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Request requestTmp = dataSnapshot.getValue(Request.class);
-                        requests.add(0, requestTmp);
+                        Review review = dataSnapshot.getValue(Review.class);
+                        reviews.add(review);
                         adapter.notifyDataSetChanged();
                         nothing.setVisibility(View.GONE);
                     }
@@ -68,15 +59,9 @@ public class RequestActivity extends AppCompatActivity {
 
                     }
 
-                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        requests.removeIf(t->t.getRequesterUid().equals(dataSnapshot.child("requesterUid").getValue().toString())
-                                        && t.getBookIsbn().equals(dataSnapshot.child("bookIsbn").getValue().toString()));
-                        adapter.notifyDataSetChanged();
-                        if (requests.size() == 0){
-                            nothing.setVisibility(View.VISIBLE);
-                        }
+
                     }
 
                     @Override
@@ -89,12 +74,12 @@ public class RequestActivity extends AppCompatActivity {
 
                     }
                 });
-    }
 
+
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         finish();
         return super.onOptionsItemSelected(item);
     }

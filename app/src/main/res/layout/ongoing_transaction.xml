@@ -5,12 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="0.5dp"
-    app:cardBackgroundColor="#ffff">
+    app:cardBackgroundColor="#ffff"
+    android:layout_margin="5dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp">
+        android:layout_height="160dp"
+        android:background="@drawable/border">
 
 
         <TextView
@@ -21,27 +22,42 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
             android:text="Book"
             android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/contact"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <TextView
-            android:id="@+id/contact"
+            android:id="@+id/email"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="16dp"
+            android:text="@string/email"
+            app:layout_constraintBottom_toTopOf="@+id/period"
+            app:layout_constraintEnd_toStartOf="@+id/borrow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contact" />
+
+
+        <TextView
+            android:id="@+id/contact"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:maxLines="1"
             android:text="Contact"
-            app:layout_constraintBottom_toTopOf="@+id/period"
-            app:layout_constraintEnd_toStartOf="@+id/status"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/book" />
 
@@ -49,31 +65,16 @@
             android:id="@+id/period"
             android:layout_width="0dp"
             android:layout_height="19dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:text="Period"
             app:layout_constraintBottom_toTopOf="@+id/rate"
-            app:layout_constraintEnd_toStartOf="@+id/borrow"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/contact" />
-
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="8dp"
-            android:gravity="right"
-            android:text="status"
-            app:layout_constraintBottom_toTopOf="@+id/borrow"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/book"
-            app:layout_constraintVertical_bias="0.846" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/email" />
 
         <TextView
             android:id="@+id/borrow"
@@ -81,10 +82,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
+
+            android:layout_marginTop="8dp"
             android:gravity="right"
             android:text="borrowed/loaned"
-
-            app:layout_constraintBottom_toTopOf="@+id/rate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/contact" />
 
@@ -100,10 +101,10 @@
             android:gravity="center"
             android:text="@string/rateNow"
             android:textColor="@android:color/holo_green_light"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:visibility="invisible"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
 
     </android.support.constraint.ConstraintLayout>

@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,47 +21,59 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class RequestActivity extends AppCompatActivity {
+public class ShowUserBooksActivity extends AppCompatActivity {
 
-
-    private RecyclerView recyclerView;
-    private RequestAdapter adapter;
-    private List<Request> requests;
     private TextView nothing;
+    private RecyclerView recyclerView;
+    private SearchBookAdapter adapter;
+
+    List<Book> books;
+    private String userUid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_request);
+        setContentView(R.layout.activity_show_user_books);
 
-        requests = new ArrayList<>();
+        books = new ArrayList<>();
 
         nothing = findViewById(R.id.nothing);
-        recyclerView = findViewById(R.id.recyclerView_requests_list);
+        recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        adapter = new RequestAdapter(requests, RequestActivity.this);
+        adapter = new SearchBookAdapter(books, ShowUserBooksActivity.this);
+
         recyclerView.setAdapter(adapter);
-
-        getSupportActionBar().setTitle(R.string.requests);
-        getRequests();
-
-
-    }
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.showbooks);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-    private void getRequests(){
-        FirebaseDatabase.getInstance().getReference()
-                .child("users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("requests")
+        userUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+
+
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(userUid)
+                .child("books")
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Request requestTmp = dataSnapshot.getValue(Request.class);
-                        requests.add(0, requestTmp);
-                        adapter.notifyDataSetChanged();
-                        nothing.setVisibility(View.GONE);
+                        FirebaseDatabase.getInstance().getReference("books")
+                                .child(dataSnapshot.getKey())
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Book book = dataSnapshot.getValue(Book.class);
+                                        books.add(book);
+                                        adapter.notifyDataSetChanged();
+                                        nothing.setVisibility(View.GONE);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
                     }
 
                     @Override
@@ -71,12 +84,8 @@ public class RequestActivity extends AppCompatActivity {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        requests.removeIf(t->t.getRequesterUid().equals(dataSnapshot.child("requesterUid").getValue().toString())
-                                        && t.getBookIsbn().equals(dataSnapshot.child("bookIsbn").getValue().toString()));
+                        books.removeIf(b->b.getIsbn().equals(dataSnapshot.getKey()));
                         adapter.notifyDataSetChanged();
-                        if (requests.size() == 0){
-                            nothing.setVisibility(View.VISIBLE);
-                        }
                     }
 
                     @Override
@@ -89,12 +98,11 @@ public class RequestActivity extends AppCompatActivity {
 
                     }
                 });
-    }
 
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         finish();
         return super.onOptionsItemSelected(item);
     }

@@ -5,4 +5,5 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:textColor="#ff0000"
-    android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+    />

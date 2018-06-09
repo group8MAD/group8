@@ -45,11 +45,26 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.Bo
         if (!book.getThumbnail().isEmpty()){
             Picasso.get().load(book.getThumbnail()).into(holder.thumbnail);
         }
-        if (FirebaseAuth.getInstance().getCurrentUser()!= null) {
+        if (FirebaseAuth.getInstance().getCurrentUser()!= null && context instanceof SearchBookActivity) {
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, SingleShowBookActivity.class);
+                    intent.putExtra("isbn", book.getIsbn());
+                    intent.putExtra("title", holder.title.getText().toString());
+                    intent.putExtra("authors", holder.authors.getText().toString());
+                    intent.putExtra("publisher", holder.publisher.getText().toString());
+                    intent.putExtra("year", holder.year.getText().toString());
+                    intent.putExtra("url", book.getThumbnail());
+                    context.startActivity(intent);
+                }
+
+            });
+        }else if (FirebaseAuth.getInstance().getCurrentUser()!= null){
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, DeleteBook.class);
                     intent.putExtra("isbn", book.getIsbn());
                     intent.putExtra("title", holder.title.getText().toString());
                     intent.putExtra("authors", holder.authors.getText().toString());

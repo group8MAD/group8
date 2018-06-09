@@ -51,7 +51,7 @@
     <string name="thumbnail_description_SingleShowBookActivity">Thumbnail of the book that is shown</string>
     <string name="message_button">Write a message</string>
     <string name="message_button_description">Send a message to the owner of the book</string>
-    <string name="chats">Chats</string>
+    <string name="chats">Chat</string>
     <string name="cantSend">You\'re sharing this book!!</string>
     <string name="bookUploadOk">Book successfully shared!!</string>
     <string name="conditions">Conditions: </string>
@@ -68,6 +68,7 @@
     <string name="tapToSelect">Tap here to select</string>
     <string name="selectedBook">Wanted Book</string>
     <string name="sendRequest">Send Request</string>
+    <string name="request">Request</string>
     <string name="requests">Requests</string>
     <string name="accept">Accept Request</string>
     <string name="deny">Deny Request</string>
@@ -96,6 +97,13 @@
     <string name="rateCommentHint">Write your review here (required)</string>
     <string name="sendReview">Send review?</string>
     <string name="reviewNotComplete">Review is not complete!</string>
-    <string name="asd">asd</string>
-    <string name="showbooks">Show my books</string>
+    <string name="showbooks">My Books</string>
+    <string name="profileDescription">You real name and you email won\'t be displayed till you accept an exchange request</string>
+    <string name="chatList">Chat List</string>
+    <string name="reviews">Reviews</string>
+    <string name="deleteBook">Delete Book</string>
+    <string name="confirmDelete">Are you sure you want to delete this book?\n</string>
+    <string name="zzz">You\'re asking for a book to: </string>
+    <string name="loaned">LOANED</string>
+    <string name="lent">LENT</string>
 </resources>

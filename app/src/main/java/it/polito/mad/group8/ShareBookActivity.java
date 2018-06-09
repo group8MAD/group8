@@ -47,6 +47,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -54,9 +55,6 @@ public class ShareBookActivity extends AppCompatActivity {
 
     public final int SIGN_IN = 1000;
 
-    private DrawerLayout mDrawerLayout; // Layout User Interface
-    private ActionBarDrawerToggle mToggle;
-    private NavigationView mNavigationView;
     private User user;
     private String userID;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -83,15 +81,10 @@ public class ShareBookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.user = new User();
         setContentView(R.layout.activity_share_book);
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mNavigationView = findViewById(R.id.nav_view);
-        mDrawerLayout.addDrawerListener(mToggle);
         book = new Book();
         booksRef = database.getReference("books/");
 
-        // Updating of the UI in case os arriving from another activity
-        updateUi(FirebaseAuth.getInstance().getCurrentUser());
-
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.share_books);
         title = findViewById(R.id.title);
         authors = findViewById(R.id.authors);
         publisher = findViewById(R.id.publisher);
@@ -160,102 +153,21 @@ public class ShareBookActivity extends AppCompatActivity {
             }
         });
 
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                switch (item.getItemId()){
-                    case R.id.nav_profile:
-                        mDrawerLayout.closeDrawers();
-                        startProfileActivity();
-                        return true;
-
-
-                    case R.id.ongoing:
-                        mDrawerLayout.closeDrawers();
-                        startActivity(new Intent(getApplicationContext(), OngoingExchangesActivity.class));
-                        return true;
-                    /*case R.id.nav_user_books:
-                        finish();
-                        startActivity(new Intent(ShareBookActivity.this, ShowBooks.class));
-                        return true;*/
-
-                    case R.id.nav_share_books_logged:
-                        mDrawerLayout.closeDrawers();
-                        return true;
-
-                    case R.id.chats:
-                        mDrawerLayout.closeDrawers();
-                        startActivity(new Intent(getApplicationContext(), ChatList.class));
-                        return true;
-
-                    case R.id.nav_search_books:
-                        mDrawerLayout.closeDrawers();
-                        startActivity(new Intent(ShareBookActivity.this, SearchBookActivity.class));
-                        return true;
-
-                    case R.id.logout:
-                        signOut();
-                        return true;
-
-                    case R.id.sign:
-                        signIn();
-                        return true;
-
-                    default:
-                        mDrawerLayout.closeDrawers();
-                }
-                return true;
-            }
-        });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateUi(FirebaseAuth.getInstance().getCurrentUser());
-        FirebaseDatabase.getInstance().getReference("users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("chats")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int counter = 0;
-                        for (DataSnapshot chat: dataSnapshot.getChildren()){
-                            counter += Integer.parseInt(chat.child("notRead").getValue().toString());
-                        }
-                        setMenuCounter(counter);
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-    }
-
-    private void setMenuCounter(int count) {
-        TextView view = (TextView) mNavigationView.getMenu().findItem(R.id.chats).getActionView();
-        view.setText(String.valueOf(count));
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-        mToggle.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (mToggle.onOptionsItemSelected(item)){
-            return true;
-        }
+        finish();
         return super.onOptionsItemSelected(item);
     }
 
@@ -265,9 +177,6 @@ public class ShareBookActivity extends AppCompatActivity {
         if(result != null) {
             if(result.getContents() == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-            } else if(requestCode == SIGN_IN) {
-                // Update the UI if receive the corresponding parameter SIGN_IN from startActivityForResult
-                updateUi(FirebaseAuth.getInstance().getCurrentUser());
             } else {
                 isbn = result.getContents();
                 new JsonTask().execute("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn);
@@ -275,64 +184,6 @@ public class ShareBookActivity extends AppCompatActivity {
         } else {
             super.onActivityResult(requestCode, resultCode, data);
 
-        }
-    }
-
-    public void signIn(){
-        mDrawerLayout.closeDrawers();
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setIsSmartLockEnabled(false)
-                        .build(),
-                SIGN_IN);
-
-    }
-
-
-    //signOut User and update DrawerMenu
-    public void signOut(){
-        mDrawerLayout.closeDrawers();
-        AuthUI.getInstance()
-                .signOut(ShareBookActivity.this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUi(FirebaseAuth.getInstance().getCurrentUser());
-                    }
-                });
-    }
-
-    //Switching to ShowProfile activity
-    public void startProfileActivity(){
-        Intent intent = new Intent(ShareBookActivity.this,ShowProfile.class);
-        finish();
-        startActivity(intent);
-    }
-
-    //Update the interface in case of signing in or out
-    public void updateUi(FirebaseUser currentUser){
-        if (currentUser != null){
-            this.userID = currentUser.getUid();
-            mNavigationView.getMenu().clear();
-            mNavigationView.inflateMenu(R.menu.menu_drawer_loggedin);
-            usersRef = database.getReference("users/"+this.userID);
-            usersRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    getData(dataSnapshot);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-        }else{
-            finish();
-            startActivity(new Intent(ShareBookActivity.this, SearchBookActivity.class));
-            mNavigationView.getMenu().clear();
-            mNavigationView.inflateMenu(R.menu.menu_drawer_not_loggedin);
         }
     }
 
@@ -345,16 +196,7 @@ public class ShareBookActivity extends AppCompatActivity {
             this.user.setBiography(dataSnapshot.getValue(User.class).getBiography());
             this.user.setNickname(dataSnapshot.getValue(User.class).getNickname());
 
-            setHeaderDrawer();
         }
-    }
-    public void setHeaderDrawer(){
-        View headerView = mNavigationView.getHeaderView(0);
-
-        CircleImageView image = headerView.findViewById(R.id.header_image);
-
-
-
     }
 
     //Getting the JSON text from the https://www.googleapis.com/books/v1/volumes?q=isbn:.....
@@ -442,7 +284,7 @@ public class ShareBookActivity extends AppCompatActivity {
 
 
             }catch (JSONException e){  //throw if some data doesn't exist
-                Toast.makeText(ShareBookActivity.this, R.string.noData, Toast.LENGTH_LONG).show();
+                //Toast.makeText(ShareBookActivity.this, R.string.noData, Toast.LENGTH_LONG).show();
             }
             //trying to get book thumbnail
             try {
@@ -450,7 +292,7 @@ public class ShareBookActivity extends AppCompatActivity {
                 String imageInfo = object.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo").getJSONObject("imageLinks").getString("thumbnail");
                 book.setThumbnail(imageInfo);
             }catch (JSONException e){
-                Toast.makeText(ShareBookActivity.this,R.string.noThumbnail, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ShareBookActivity.this,R.string.noThumbnail, Toast.LENGTH_SHORT).show();
             }
 
 
@@ -477,6 +319,7 @@ public class ShareBookActivity extends AppCompatActivity {
                         //path /books/{bookISBN}/users/{userID}/condition
                         dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue(condition);
                         dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("status").setValue("available");
+                        dataSnapshot.getRef().child(isbn).child("isbn").setValue(isbn);
                         //adding book to user in database
                         //path /users/{userID}/books/{bookISBN}/condition
                         dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
@@ -495,6 +338,7 @@ public class ShareBookActivity extends AppCompatActivity {
                         //path /books/{bookISBN}/users/{userID}/condition
                         dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("condition").setValue(condition);
                         dataSnapshot.getRef().child(isbn).child("owners").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("status").setValue("available");
+                        dataSnapshot.getRef().child(isbn).child("isbn").setValue(isbn);
                         //adding book to user in database
                         //path /users/{userID}/books/{bookISBN}/condition
                         dataSnapshot.getRef().getParent().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("books")
@@ -507,7 +351,7 @@ public class ShareBookActivity extends AppCompatActivity {
                         deleteBook();
                     }
                 }else{
-                    Toast.makeText(ShareBookActivity.this,R.string.bookNotValid,Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ShareBookActivity.this,R.string.bookNotValid,Toast.LENGTH_LONG).show();
                 }
             }
             @Override

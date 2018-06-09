@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +30,9 @@ public class PublicShowProfile extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private TextView nicknameTV;
     private TextView cityProvince;
+    private TextView biography;
     private ImageView userImageIV;
+    private RatingBar ratingBar;
     private Button readReview;
     private Button contactUser;
     private Button borrow;
@@ -56,6 +59,7 @@ public class PublicShowProfile extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.setMessage(getString(R.string.wait));
         //Getting views
+        biography = findViewById(R.id.biography);
         rateButton = findViewById(R.id.rate);
         nicknameTV = findViewById(R.id.nickname);
         userImageIV = findViewById(R.id.image);
@@ -63,6 +67,7 @@ public class PublicShowProfile extends AppCompatActivity {
         contactUser = findViewById(R.id.contactUser);
         borrow = findViewById(R.id.sendRequest);
         cityProvince = findViewById(R.id.cityProvince);
+        ratingBar = findViewById(R.id.ratingBar);
         progressDialog.show();
         //getting data from intent
         contactUserUid = getIntent().getStringExtra("contactUid");
@@ -79,6 +84,7 @@ public class PublicShowProfile extends AppCompatActivity {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        biography.setText(Objects.requireNonNull(dataSnapshot.child("biography").getValue()).toString());
                         contactUserNickname = Objects.requireNonNull(dataSnapshot.child("nickname").getValue()).toString();
                         contactUserImageUrl = Objects.requireNonNull(dataSnapshot.child("imageUri").getValue()).toString();
                         contactUserCity = Objects.requireNonNull(dataSnapshot.child("city").getValue()).toString();
@@ -137,7 +143,33 @@ public class PublicShowProfile extends AppCompatActivity {
             }
         });
 
+        readReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ShowReviewsActivity.class);
+                intent.putExtra("user", contactUserUid);
+                startActivity(intent);
+            }
+        });
 
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(contactUserUid)
+                .child("reviews")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        float rating = 0;
+                        for (DataSnapshot review: dataSnapshot.getChildren()){
+                            rating += Float.parseFloat(review.child("rating").getValue().toString());
+                        }
+                        ratingBar.setRating(rating / dataSnapshot.getChildrenCount());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
         borrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,11 +204,12 @@ public class PublicShowProfile extends AppCompatActivity {
                     intent.putExtra("contactUserUid",contactUserUid);
                     FirebaseDatabase.getInstance().getReference("users")
                             .child(currentUserUid)
-                            .child("nickname")
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    intent.putExtra("currentUserNickname", dataSnapshot.getValue().toString());
+                                    intent.putExtra("currentUserImageUri", dataSnapshot.child("nickname").getValue().toString());
+                                    intent.putExtra("currentUserNickname", dataSnapshot.child("nickname").getValue().toString());
+                                    intent.putExtra("currentUserImageUri", dataSnapshot.child("imageUri").getValue().toString());
                                     startActivity(intent);
                                 }
 
